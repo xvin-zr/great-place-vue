@@ -55,7 +55,11 @@ console.log(cityList.value);
                   <label for="province">省</label>
                   <select v-model="province" id="province" required>
                     <option value="" disabled>请选择</option>
-                    <option v-for="{ province } in cities" :value="province">
+                    <option
+                      v-for="{ province } in cities"
+                      :value="province"
+                      :key="province"
+                    >
                       {{ province }}
                     </option>
                     <!-- <option value="friends">Friends and family</option>
@@ -74,6 +78,7 @@ console.log(cityList.value);
                       v-if="cityList"
                       v-for="city in cityList"
                       :value="city"
+                      :key="city"
                     >
                       {{ city }}
                     </option>
