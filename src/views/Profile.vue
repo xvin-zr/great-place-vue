@@ -101,6 +101,7 @@ function handleModify() {
               cols="20"
               rows="5"
               placeholder="Tell us a little bit about yourself"
+              :disabled="isLocked"
             ></textarea>
           </dd>
         </dl>
