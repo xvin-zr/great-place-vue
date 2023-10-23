@@ -1,5 +1,11 @@
 <script setup>
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
+
+onMounted(() => {
+  document.title = "好去处｜登录";
+})
+
 const router = useRouter();
 function toUrl(to) {
   router.push(to);

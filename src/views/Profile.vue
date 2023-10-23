@@ -1,5 +1,9 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+
+onMounted(function () {
+  document.title = "好去处｜个人信息";
+})
 
 const isLocked = ref(true);
 

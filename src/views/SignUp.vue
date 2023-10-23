@@ -1,6 +1,10 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { cities } from "../assets/city.js";
+
+onMounted(() => {
+  document.title = "好去处｜注册";
+});
 
 const username = ref("");
 const password = ref("");
