@@ -1,6 +1,5 @@
 import HelloWorld from "../components/HelloWorld.vue";
 import { createRouter, createWebHistory } from "vue-router";
-import hello from "../views/hello.vue";
 import Login from "../views/Login.vue";
 
 const routes = [
@@ -9,6 +8,20 @@ const routes = [
     path: "/signup",
     name: "SignUp",
     component: () => import("../views/SignUp.vue"),
+  },
+  {
+    path: "/find-place",
+    component: () => import("../components/Header.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("../views/Find.vue"),
+      },
+      {
+        path: "profile",
+        component: () => import("../views/Profile.vue"),
+      }
+    ]
   },
 ];
 const router = createRouter({
