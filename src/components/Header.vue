@@ -26,7 +26,6 @@
       </ul>
     </nav>
   </header>
-  <RouterView></RouterView>
 </template>
 
 <style scoped></style>

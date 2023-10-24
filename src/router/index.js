@@ -11,7 +11,7 @@ const routes = [
   },
   {
     path: "/find-place",
-    component: () => import("../components/Header.vue"),
+    component: () => import("../components/MainApp.vue"),
     children: [
       {
         path: "",
