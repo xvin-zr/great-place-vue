@@ -1,5 +1,4 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
   <header class="header">
@@ -11,15 +10,33 @@
     <nav class="main-nav">
       <ul class="main-nav-list">
         <li>
-          <RouterLink to="/find-place/profile" class="main-nav-link" href="#"
+          <RouterLink
+            to="/find-place/profile"
+            active-class="active-link"
+            class="main-nav-link"
+            href="#"
             >个人信息</RouterLink
           >
         </li>
-        <li><a class="main-nav-link" href="#">Meals</a></li>
-        <li><a class="main-nav-link" href="#">Testimonials</a></li>
-        <li><a class="main-nav-link" href="#">欢迎来</a></li>
         <li>
-          <a class="main-nav-link nav-cta" href="#" onclick="handleNewPlace()"
+          <a active-class="active-link" class="main-nav-link" href="#">Meals</a>
+        </li>
+        <li>
+          <a active-class="active-link" class="main-nav-link" href="#"
+            >Testimonials</a
+          >
+        </li>
+        <li>
+          <a active-class="active-link" class="main-nav-link" href="#"
+            >欢迎来</a
+          >
+        </li>
+        <li>
+          <a
+            active-class="active-link"
+            class="main-nav-link nav-cta"
+            href="#"
+            onclick="handleNewPlace()"
             >寻去处</a
           >
         </li>
@@ -28,4 +45,9 @@
   </header>
 </template>
 
-<style scoped></style>
+<style scoped>
+.active-link {
+  color: #e67e22;
+  font-weight: 600;
+}
+</style>
