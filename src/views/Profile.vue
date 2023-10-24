@@ -1,22 +1,27 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+import { cities } from "../assets/city.js";
 
 onMounted(function () {
   document.title = "好去处｜个人信息";
-})
+});
 
 const isLocked = ref(true);
+const province = ref("");
+const cityList = computed(() => {
+  return cities.find((item) => item.province === province.value)?.cities;
+});
+const selectedCity = ref("");
 
 function handleModify() {
   if (isLocked.value) {
-    isLocked.value = false
+    isLocked.value = false;
   } else {
     // 验证用户输入合法
 
-    isLocked.value = true
+    isLocked.value = true;
   }
 }
-
 </script>
 
 <template>
@@ -43,12 +48,7 @@ function handleModify() {
             <label for="name">用户姓名</label>
           </dt>
           <dd>
-            <input
-              type="text"
-              id="name"
-              value="Name"
-              :disabled="isLocked"
-            />
+            <input type="text" id="name" value="Name" :disabled="isLocked" />
           </dd>
         </dl>
         <dl>
@@ -107,10 +107,41 @@ function handleModify() {
         </dl>
         <dl>
           <dt>
-            <label for="city">城市</label>
+            <label for="city">省份 & 城市</label>
           </dt>
           <dd>
-            <input type="text" id="city" value="深圳市" :disabled="isLocked" />
+            <select
+              v-model="province"
+              id="province"
+              :disabled="isLocked"
+              required
+            >
+              <option value="" disabled>请选择</option>
+              <option
+                v-for="{ province } in cities"
+                :value="province"
+                :key="province"
+              >
+                {{ province }}
+              </option>
+            </select>
+            <select
+              v-model="selectedCity"
+              id="city"
+              :disabled="isLocked"
+              required
+            >
+              <option value="" disabled>请选择</option>
+              <option
+                v-if="cityList"
+                v-for="city in cityList"
+                :value="city"
+                :key="city"
+              >
+                {{ city }}
+              </option>
+            </select>
+            <!-- <input type="text" id="city" value="深圳市" :disabled="isLocked" /> -->
           </dd>
         </dl>
 
@@ -200,6 +231,10 @@ function handleModify() {
   background-color: #fdf2e9;
   color: #bbb;
   cursor: not-allowed;
+}
+
+#city {
+  margin-top: 12px;
 }
 
 .buttons {
