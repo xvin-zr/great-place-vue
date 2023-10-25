@@ -1,5 +1,12 @@
 <script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
+
+const atFindPage = computed(() => {
+    return route.path === '/find-place';
+});
 
 </script>
 
@@ -19,8 +26,9 @@
         </blockquote>
 
         <div class="place-detail-actions">
-          <button class="action-btn">修改</button>
-          <button class="action-btn">删除</button>
+          <button v-if="atFindPage" class="action-btn">修改</button>
+          <button v-if="atFindPage" class="action-btn">删除</button>
+          <button v-if="!atFindPage" class="action-btn">欢迎来</button>
         </div>
       </div>
 

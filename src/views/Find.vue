@@ -1,4 +1,5 @@
 <script setup>
+import './find-welcome.css'
 import { inject, onMounted, ref } from "vue";
 import PlaceDetail from "../components/PlaceDetail.vue";
 
@@ -120,7 +121,7 @@ onMounted(() => {
   </main>
 </template>
 
-<style scoped>
+<!-- <style scoped>
 .search-section {
   background-color: #fdf2e9;
   padding-bottom: 3.2rem;
@@ -151,6 +152,7 @@ onMounted(() => {
   font-size: 1.8rem;
   border: none;
   cursor: pointer;
+  transition: all 0.3s;
 }
 
 .btn--search:hover {
@@ -408,4 +410,4 @@ onMounted(() => {
 }
 
 
-</style>
+</style> -->

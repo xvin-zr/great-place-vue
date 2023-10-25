@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { cities } from "../assets/city.js";
+import { cities } from "../data/city.js";
 
 onMounted(() => {
   document.title = "好去处｜注册";

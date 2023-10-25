@@ -43,8 +43,8 @@ function handleClickFindPlace() {
           >
         </li>
         <li>
-          <a active-class="active-link" class="main-nav-link" href="#"
-            >欢迎来</a
+          <RouterLink to="/find-place/welcome" active-class="active-link" class="main-nav-link" href="#"
+            >欢迎来</RouterLink
           >
         </li>
         <li>
