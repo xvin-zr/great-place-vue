@@ -24,12 +24,16 @@ const routes = [
       {
         path: "profile",
         component: () => import("../views/Profile.vue"),
-      }
-    ]
+      },
+    ],
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    component: () => import("../views/NotFound.vue"),
   },
 ];
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 
