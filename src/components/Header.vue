@@ -7,7 +7,6 @@ const route = useRoute();
 const showPublish = inject("showPublish");
 function handleClickFindPlace() {
   if (route.path === '/find-place')  {
-    console.log('已经在寻去处页面');
     showPublish.value = true;
   } else {
     router.push('/find-place');
