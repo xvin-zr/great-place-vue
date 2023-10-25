@@ -1,4 +1,21 @@
-<script setup></script>
+<script setup>
+import { inject } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const router = useRouter();
+const route = useRoute();
+const showPublish = inject("showPublish");
+function handleClickFindPlace() {
+  if (route.path === '/find-place')  {
+    console.log('已经在寻去处页面');
+    showPublish.value = true;
+  } else {
+    router.push('/find-place');
+  }
+
+}
+
+</script>
 
 <template>
   <header class="header">
@@ -36,7 +53,7 @@
             active-class="active-link"
             class="main-nav-link nav-cta"
             href="#"
-            onclick="handleNewPlace()"
+            @click.prevent="handleClickFindPlace"
             >寻去处</a
           >
         </li>
