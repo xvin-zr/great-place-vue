@@ -16,6 +16,6 @@
     "@vitejs/plugin-vue": "^4.2.3",
     "@vitejs/plugin-vue-jsx": "^3.0.2",
     "@vue/babel-plugin-jsx": "^1.1.5",
-    "vite": "^4.4.5"
+    "vite": "^4.5.0"
   }
 }
