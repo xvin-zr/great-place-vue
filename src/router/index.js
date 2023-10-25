@@ -1,9 +1,9 @@
-import HelloWorld from "../components/HelloWorld.vue";
+// import HelloWorld from "../components/HelloWorld.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/Login.vue";
 
 const routes = [
-  { path: "/", name: "Login", component: Login },
+  { path: "/", name: "Login", component: () => import("../views/Login.vue") },
   {
     path: "/signup",
     name: "SignUp",
@@ -34,7 +34,7 @@ const routes = [
       {
         path: "",
         component: () => import("../views/Statistics.vue"),
-      }, 
+      },
       {
         path: "/statistics",
         component: () => import("../views/Statistics.vue"),
@@ -46,8 +46,8 @@ const routes = [
       {
         path: "/response",
         component: () => import("../views/Response.vue"),
-      }
-    ]
+      },
+    ],
   },
   {
     path: "/:pathMatch(.*)*",
