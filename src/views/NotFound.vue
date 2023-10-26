@@ -9,10 +9,10 @@ const playlist = reactive([
 </script>
 
 <template>
-  <h1>404 Not Found. 😅</h1>
+  <h1>404 Not Found. 😿</h1>
   <h1 class="h1-2">
     Tired of searching for places? <br />
-    Let's listen to a song. 🎵
+    Let’s listen to a song. 🎵
   </h1>
   <iframe
     allow="autoplay *; encrypted-media *;"
@@ -23,6 +23,8 @@ const playlist = reactive([
       max-width: 660px;
       overflow: hidden;
       background: transparent;
+      border-radius: 10px;
+      scale: 1.2;
     "
     sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation"
     :src="playlist[Math.floor(Math.random() * playlist.length)]"
@@ -44,6 +46,12 @@ h1 {
 iframe {
   display: block;
   margin: 0 auto;
-  margin-top: 48px;
+  margin-top: 64px;
+  transition: all 0.3s;
+}
+
+iframe:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 </style>
