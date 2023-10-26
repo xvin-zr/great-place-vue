@@ -10,6 +10,7 @@ const username = ref("");
 const password = ref("");
 const phoneNum = ref(null);
 const province = ref("");
+const userType = ref("");
 const cityList = computed(() => {
   return cities.find((item) => item.province === province.value)?.cities;
 });
@@ -90,6 +91,42 @@ console.log(cityList.value);
                 </div>
 
                 <div>
+                  <label for="license-type">证件类型</label>
+                  <select id="license-type" required>
+                    <option value="id">身份证</option>
+                    <option value="passport">护照</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="license-number">证件号</label>
+                  <input type="text" id="license-number" required />
+                </div>
+
+                <div>
+                  <label for="user-type">用户类型</label>
+                  <select v-model="userType" id="user-type" required>
+                    <option value="" disabled>请选择</option>
+                    <option value="user">普通用户</option>
+                    <option value="admin">管理员</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="admin-key">管理员密钥</label>
+                  <input
+                    type="text"
+                    id="admin-key"
+                    :disabled="userType !== 'admin'"
+                  />
+                </div>
+
+                <div>
+                  <label for="name">姓名</label>
+                  <input type="text" id="name" placeholder="xxx" required />
+                </div>
+
+                <div>
                   <label for="phone">联系电话</label>
                   <input
                     v-model="phoneNum"
@@ -98,6 +135,14 @@ console.log(cityList.value);
                     placeholder="+86"
                     required
                   />
+                </div>
+
+                <div>
+                  <label for="user-level">用户级别</label>
+                  <select name="" id="user-level" required>
+                    <option value="normal">一般用户</option>
+                    <option value="vip">VIP 用户</option>
+                  </select>
                 </div>
 
                 <button class="btn btn--form">注册</button>
@@ -242,6 +287,11 @@ h2 span {
 
 .cta-form input::placeholder {
   color: #aaa;
+}
+
+.cta-form input:disabled,
+.cta-form select:disabled {
+  cursor: not-allowed;
 }
 
 .cta *:focus {
