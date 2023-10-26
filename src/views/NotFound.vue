@@ -1,5 +1,9 @@
 <script setup>
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
+
+onMounted(() => {
+  document.title = "好去处｜Break Time";
+});
 
 const playlist = reactive([
   "https://embed.music.apple.com/cn/album/%E6%88%91%E6%98%AF%E4%B8%80%E5%8F%AA%E5%B0%8F%E5%B0%8F%E9%B8%9F/1329432176?i=1329432678",
