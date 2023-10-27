@@ -22,7 +22,7 @@ function handleClickFindPlace() {
       <ion-icon class="icon--header" name="compass-outline"></ion-icon>
       <!-- <h2>好去处</h2> -->
     </a>
-    <!-- <span>好去处</span> -->
+    <span class="header-name">欢迎，xxx</span>
     <nav class="main-nav">
       <ul class="main-nav-list">
         <li>
@@ -65,5 +65,11 @@ function handleClickFindPlace() {
 .active-link {
   color: #e67e22;
   font-weight: 600;
+}
+
+.header-name {
+  margin-right: auto;
+  margin-left: 3.2rem;
+  font-size: 1.8rem;
 }
 </style>
