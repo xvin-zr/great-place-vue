@@ -34,7 +34,7 @@ console.log(cityList.value);
 
               <form class="cta-form" action="#">
                 <div>
-                  <label for="username">用户名</label>
+                  <label for="username">用户名*</label>
                   <input
                     v-model="username"
                     id="username"
@@ -45,7 +45,7 @@ console.log(cityList.value);
                 </div>
 
                 <div>
-                  <label for="password">密码</label>
+                  <label for="password">密码*</label>
                   <input
                     v-model="password"
                     id="password"
@@ -57,7 +57,7 @@ console.log(cityList.value);
                   />
                 </div>
                 <div>
-                  <label for="province">省</label>
+                  <label for="province">省*</label>
                   <select v-model="province" id="province" required>
                     <option value="" disabled>请选择</option>
                     <option
@@ -76,7 +76,7 @@ console.log(cityList.value);
                 </div>
 
                 <div>
-                  <label for="city">市</label>
+                  <label for="city">市*</label>
                   <select v-model="selectedCity" id="city" required>
                     <option value="" disabled>请选择</option>
                     <option
@@ -91,7 +91,7 @@ console.log(cityList.value);
                 </div>
 
                 <div>
-                  <label for="license-type">证件类型</label>
+                  <label for="license-type">证件类型*</label>
                   <select id="license-type" required>
                     <option value="id">身份证</option>
                     <option value="passport">护照</option>
@@ -99,12 +99,12 @@ console.log(cityList.value);
                 </div>
 
                 <div>
-                  <label for="license-number">证件号</label>
+                  <label for="license-number">证件号*</label>
                   <input type="text" id="license-number" required />
                 </div>
 
                 <div>
-                  <label for="user-type">用户类型</label>
+                  <label for="user-type">用户类型*</label>
                   <select v-model="userType" id="user-type" required>
                     <option value="" disabled>请选择</option>
                     <option value="user">普通用户</option>
@@ -113,7 +113,7 @@ console.log(cityList.value);
                 </div>
 
                 <div>
-                  <label for="admin-key">管理员密钥</label>
+                  <label for="admin-key">管理员秘钥</label>
                   <input
                     type="text"
                     id="admin-key"
@@ -122,12 +122,12 @@ console.log(cityList.value);
                 </div>
 
                 <div>
-                  <label for="name">姓名</label>
+                  <label for="name">姓名*</label>
                   <input type="text" id="name" placeholder="xxx" required />
                 </div>
 
                 <div>
-                  <label for="phone">联系电话</label>
+                  <label for="phone">联系电话*</label>
                   <input
                     v-model="phoneNum"
                     id="phone"
@@ -139,7 +139,12 @@ console.log(cityList.value);
 
                 <div>
                   <label for="user-level">用户级别</label>
-                  <select name="" id="user-level" required>
+                  <select
+                    name=""
+                    id="user-level"
+                    :disabled="userType !== 'user'"
+                    required
+                  >
                     <option value="normal">一般用户</option>
                     <option value="vip">VIP 用户</option>
                   </select>
@@ -291,6 +296,7 @@ h2 span {
 
 .cta-form input:disabled,
 .cta-form select:disabled {
+  opacity: 0.7;
   cursor: not-allowed;
 }
 
