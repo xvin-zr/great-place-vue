@@ -34,12 +34,7 @@ function handleModify() {
             <label for="username">用户名</label>
           </dt>
           <dd>
-            <input
-              type="text"
-              id="username"
-              value="Username"
-              :disabled="isLocked"
-            />
+            <input type="text" id="username" value="Username" disabled />
           </dd>
         </dl>
 
@@ -48,7 +43,7 @@ function handleModify() {
             <label for="name">用户姓名</label>
           </dt>
           <dd>
-            <input type="text" id="name" value="Name" :disabled="isLocked" />
+            <input type="text" id="name" value="Name" disabled />
           </dd>
         </dl>
         <dl>
@@ -57,7 +52,7 @@ function handleModify() {
           </dt>
           <dd>
             <!-- <input type= "text" id="license-type" value="身份证" disabled> -->
-            <select name="" id="license-type" :disabled="isLocked">
+            <select name="" id="license-type" disabled>
               <option value="identity">身份证</option>
               <option value="passport">护照</option>
             </select>
@@ -72,7 +67,7 @@ function handleModify() {
               type="text"
               id="license-number"
               value="4123456789"
-              :disabled="isLocked"
+              disabled
             />
           </dd>
         </dl>
@@ -107,39 +102,44 @@ function handleModify() {
         </dl>
         <dl>
           <dt>
-            <label for="city">省份 & 城市</label>
+            <label v-if="isLocked" for="password">密码</label>
+            <label v-else for="password">新密码</label>
+          </dt>
+          <dd>
+            <input type="password" id="password" :disabled="isLocked">
+            <br/>
+
+            
+          </dd>
+        </dl>
+        <dl v-if="!isLocked">
+          <dt>
+            <label for="password-check">确认密码</label>
+          </dt>
+          <dd>
+            <input type="password" id="password-check" :disabled="isLocked">
+          </dd>
+        </dl>
+        <dl>
+          <dt>
+            <label for="city">城市</label>
           </dt>
           <dd>
             <select
-              v-model="province"
-              id="province"
-              :disabled="isLocked"
-              required
-            >
-              <option value="" disabled>请选择</option>
-              <option
-                v-for="{ province } in cities"
-                :value="province"
-                :key="province"
-              >
-                {{ province }}
-              </option>
-            </select>
-            <select
               v-model="selectedCity"
               id="city"
-              :disabled="isLocked"
+              disabled
               required
             >
               <option value="" disabled>请选择</option>
-              <option
+              <!-- <option
                 v-if="cityList"
                 v-for="city in cityList"
                 :value="city"
                 :key="city"
               >
                 {{ city }}
-              </option>
+              </option> -->
             </select>
             <!-- <input type="text" id="city" value="深圳市" :disabled="isLocked" /> -->
           </dd>

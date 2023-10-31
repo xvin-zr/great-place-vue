@@ -23,7 +23,8 @@ body {
   font-family: "Fira Sans", "Noto Sans SC", sans-serif;
   line-height: 1;
   font-weight: 500;
-  color: rgb(29, 29, 31);
+  /* color: rgb(29, 29, 31); */
+  color: #2e1907;
 
 }
 
@@ -35,7 +36,7 @@ body {
 .heading-secondary,
 .heading-tertiary {
   font-weight: 700;
-  color: #333;
+  /* color: #333; */
   /* color: #45260a; */
   /* color: #343a40; */
   letter-spacing: -1px;
@@ -94,7 +95,8 @@ body {
 .main-nav-link:visited {
   display: inline-block;
   text-decoration: none;
-  color: #333;
+  /* color: #333; */
+  color: inherit;
   font-weight: 500;
   font-size: 1.8rem;
   transition: all 0.3s;
