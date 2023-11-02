@@ -7,8 +7,14 @@ onMounted(() => {
 })
 
 const router = useRouter();
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
 function toUrl(to) {
   router.push(to);
+}
+
+async function onLogin() {
+  
 }
 </script>
 
@@ -52,7 +58,7 @@ function toUrl(to) {
               </button>
               <!-- </RouterLink> -->
 
-              <button class="btn btn--form">登录</button>
+              <button @click.prevent="onLogin" class="btn btn--form">登录</button>
 
               <!-- <input type="checkbox" />
                 <input type="number" /> -->
