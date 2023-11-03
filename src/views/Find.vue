@@ -1,12 +1,39 @@
 <script setup>
-import './find-welcome.css'
-import { inject, onMounted, ref } from "vue";
+import "./find-welcome.css";
+import { computed, inject, onMounted, reactive, ref, watchEffect } from "vue";
 import PlaceDetail from "../components/PlaceDetail.vue";
 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const showPublish = inject("showPublish");
+const currPage = ref(1);
+const placeList = reactive([]);
+const pageSize = computed(() => {
+  if (!placeList.length) return 10;
+  return placeList.length;
+});
+const placeType = ref("");
+const topicName = ref("");
 
 onMounted(() => {
   document.title = "好去处｜寻去处";
+
+});
+
+watchEffect(async function () {
+  try {
+    const res = await fetch(`${BASE_URL}/xqc/list?pageNum=${currPage.value}&pageSize=${pageSize.value}&placeType=${placeType.value}&topicName=${topicName.value}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+    });
+    const data = await res.json();
+    console.log(data);
+    placeList = data.list;
+  } catch (error) {
+    console.log(error);
+  }
 });
 </script>
 
@@ -15,8 +42,8 @@ onMounted(() => {
     <section class="search-section">
       <h2 class="heading-secondary center-text">发现好去处</h2>
       <div class="search-container">
-        <select id="place"></select>
-        <input type="text" placeholder="搜索好去处" />
+        <select v-model="placeType" id="place"></select>
+        <input v-model="topicName" type="text" placeholder="搜索好去处" />
         <button class="btn--search">Search</button>
       </div>
     </section>
@@ -58,11 +85,13 @@ onMounted(() => {
       </div>
 
       <nav class="place-pagination">
-        <button class="pagination-btn pagination-btn-left">
+        <button @click.prevent="currPage > 1 ? currPage-- : currPage" class="pagination-btn pagination-btn-left">
           <ion-icon class="icon" name="arrow-back-outline"></ion-icon>
         </button>
-        <div class="page"><strong>1</strong> / 20</div>
-        <button class="pagination-btn pagination-btn-right">
+        <div class="page">
+          <strong>{{ currPage }}</strong> / {{ pageSize }}
+        </div>
+        <button @click.prevent="currPage < pageSize ? currPage++ : currPage" class="pagination-btn pagination-btn-right">
           <ion-icon class="icon" name="arrow-forward-outline"></ion-icon>
         </button>
       </nav>

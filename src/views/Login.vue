@@ -1,20 +1,46 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 onMounted(() => {
   document.title = "好去处｜登录";
-})
+});
 
 const router = useRouter();
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+const username = ref("");
+const password = ref("");
 
 function toUrl(to) {
   router.push(to);
 }
 
 async function onLogin() {
-  
+  console.log(username.value, password.value);
+  try {
+    const res = await fetch(`${BASE_URL}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }),
+      redirect: "follow",
+    });
+
+    if (!res.ok) {
+      throw new Error("登录失败");
+    }
+
+    const data = await res.json();
+    console.log(data);
+    sessionStorage.setItem("token", data.token);
+  } catch (error) {
+    console.log(error);
+  }
 }
 </script>
 
@@ -35,6 +61,7 @@ async function onLogin() {
               <div>
                 <label for="username">用户名</label>
                 <input
+                  v-model="username"
                   id="username"
                   type="text"
                   placeholder="Great Places"
@@ -45,6 +72,7 @@ async function onLogin() {
               <div>
                 <label for="password">密码</label>
                 <input
+                  v-model="password"
                   id="password"
                   type="password"
                   placeholder="**********"
@@ -58,7 +86,9 @@ async function onLogin() {
               </button>
               <!-- </RouterLink> -->
 
-              <button @click.prevent="onLogin" class="btn btn--form">登录</button>
+              <button @click.prevent="onLogin" class="btn btn--form">
+                登录
+              </button>
 
               <!-- <input type="checkbox" />
                 <input type="number" /> -->
