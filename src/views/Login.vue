@@ -25,8 +25,8 @@ async function onLogin() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: username.value,
-        password: password.value,
+        userName: username.value,
+        passWord: password.value
       }),
       redirect: "follow",
     });
@@ -35,8 +35,11 @@ async function onLogin() {
       alert("登录失败");
       throw new Error("登录失败");
     }
+    console.log(res);
 
     const data = await res.json();
+    // const text = await res.text();
+    // console.log(text);
     if (data.code === 1) {
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("username", username.value);
@@ -47,6 +50,9 @@ async function onLogin() {
     console.log(error);
   }
 }
+
+
+// onPublishPlace();
 </script>
 
 <template>

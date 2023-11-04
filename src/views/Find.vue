@@ -1,14 +1,23 @@
 <script setup>
 import "./find-welcome.css";
-import { computed, inject, onMounted, provide, reactive, ref, watchEffect } from "vue";
+import {
+  computed,
+  inject,
+  onMounted,
+  provide,
+  reactive,
+  ref,
+  watchEffect,
+} from "vue";
 import PlaceDetail from "../components/PlaceDetail.vue";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+const token = sessionStorage.getItem("token");
 const showPublish = inject("showPublish");
 const currPage = ref(1);
 const placeList = ref([]);
 const pageSize = 5;
-const totalSize = ref("1");
+const totalSize = ref(1);
 const placeType = ref("");
 const topicName = ref("");
 
@@ -26,6 +35,7 @@ watchEffect(async function () {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
         redirect: "follow",
       }
@@ -34,7 +44,7 @@ watchEffect(async function () {
     console.log(data);
     const placesData = data.data;
     placeList.value = placesData.list;
-    totalSize.value = placesData.total;
+    totalSize.value = Math.ceil(placesData.rows / pageSize);
     console.log(totalSize.value);
     console.log(placeList.value);
   } catch (error) {
@@ -42,12 +52,37 @@ watchEffect(async function () {
   }
 });
 
-function onClick(place) {
-  selectedPlace.value = place;
+// 发布寻去处
+async function onPublishPlace() {
+  try {
+    const res = await fetch(`${BASE_URL}/xqc/save`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        placeType: "1",
+        topicName: "foo",
+        description: "中文中文中文",
+        filePath: "",
+        maxPrice: "100",
+        endTime: "2024-01-01",
+        cityCode: "110000",
+      }),
+      redirect: "follow",
+    })
+    console.log(res);
+    const text = await res.text();
+    console.log(text);
+    // const data = await res.json();
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
   
 }
-
-
 </script>
 
 <template>
@@ -70,11 +105,16 @@ function onClick(place) {
               <p class="place-description">钓鱼</p>
             </div>
           </li> -->
-          <li @click="selectedPlaceId = place.id" v-for="place in placeList" :key="place.id">
+          <li
+            @click="selectedPlaceId = place.id"
+            v-for="place in placeList"
+            :key="place.id"
+          >
             <div class="place">
               <h2 class="place-title">{{ place.topicName }}</h2>
-              <p class="place-description">{{ place.placeType }} | {{ place.createTime }}</p>
-
+              <p class="place-description">
+                {{ place.placeType }} | {{ place.createTime }}
+              </p>
             </div>
           </li>
         </ul>
