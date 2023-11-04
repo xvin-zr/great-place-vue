@@ -1,9 +1,65 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { cities } from "../data/city.js";
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const token = sessionStorage.getItem("token");
+
+// 用户个人信息
+// const id = ref("");
+// const userName = ref("");
+const password = ref("");
+// const userType = ref("");
+// const name = ref("");
+// const idCardType = ref("");
+// const idCard = ref("");
+const phoneNumber = ref("");
+// const userLevel = ref("");
+const userBriefly = ref("");
+// const registeredCityCode = ref("");
+// const registeredCityName = ref("");
+// const createTime = ref("");
+// const updateTime = ref("");
+const newPassword = ref("");
+const confirmPassword = ref("");
+
+const curUser = reactive({});
 
 onMounted(function () {
   document.title = "好去处｜个人信息";
+
+  async function getUserInfo() {
+    try {
+      const res = await fetch(`${BASE_URL}/getUserDetails/userId`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        redirect: "follow",
+      });
+      const data = await res.json();
+      curUser = data.data;
+      // id.value = curUser.id;
+      // userName.value = curUser.userName;
+      // // password.value = curUser.password;
+      // userType.value = curUser.userType;
+      // name.value = curUser.name;
+      // idCardType.value = curUser.idCardType;
+      // idCard.value = curUser.idCard;
+      // phoneNumber.value = curUser.phoneNumber;
+      // userLevel.value = curUser.userLevel;
+      // userBriefly.value = curUser.userBriefly;
+      // registeredCityCode.value = curUser.registeredCityCode;
+      // registeredCityName.value = curUser.registeredCityName;
+      // createTime.value = curUser.createTime;
+      // updateTime.value = curUser.updateTime;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  getUserInfo();
 });
 
 const isLocked = ref(true);
@@ -13,12 +69,26 @@ const cityList = computed(() => {
 });
 const selectedCity = ref("");
 
-function handleModify() {
+async function handleModify() {
   if (isLocked.value) {
     isLocked.value = false;
   } else {
     // 验证用户输入合法
-
+    const res = await fetch(`${BASE_URL}/updateUser`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        ...curUser,
+        phoneNumber: phoneNumber.value,
+        userBriefly: userBriefly.value,
+        password: password.value,
+        confirmPassword: confirmPassword.value,
+        updateTime: new Date(),
+      }),
+    });
     isLocked.value = true;
   }
 }
@@ -26,7 +96,8 @@ function handleModify() {
 
 <template>
   <main class="profile-main">
-    <h2 class="profile-heading center-text">个人信息</h2>
+    <h2 class="profile-heading center-text">个人信息 {{ userType ? `(${userType})` : "" }}</h2>
+    
     <section class="profile-info">
       <form action="#" class="profile-form">
         <dl class="form-group">
@@ -34,7 +105,7 @@ function handleModify() {
             <label for="username">用户名</label>
           </dt>
           <dd>
-            <input type="text" id="username" value="Username" disabled />
+            <input type="text" id="username" :value="curUser.userName" disabled />
           </dd>
         </dl>
 
@@ -43,7 +114,7 @@ function handleModify() {
             <label for="name">用户姓名</label>
           </dt>
           <dd>
-            <input type="text" id="name" value="Name" disabled />
+            <input type="text" id="name" :value="curUser.name" disabled />
           </dd>
         </dl>
         <dl>
@@ -52,9 +123,9 @@ function handleModify() {
           </dt>
           <dd>
             <!-- <input type= "text" id="license-type" value="身份证" disabled> -->
-            <select name="" id="license-type" disabled>
-              <option value="identity">身份证</option>
-              <option value="passport">护照</option>
+            <select v-model="curUser.idCardType" name="" id="license-type" disabled>
+              <option value="1">身份证</option>
+              <option value="2">护照</option>
             </select>
           </dd>
         </dl>
@@ -66,7 +137,7 @@ function handleModify() {
             <input
               type="text"
               id="license-number"
-              value="4123456789"
+              :value="curUser.idCard"
               disabled
             />
           </dd>
@@ -77,10 +148,10 @@ function handleModify() {
           </dt>
           <dd>
             <input
+              v-model="phoneNumber"
               type="number"
               id="phone-number"
               length="11"
-              value="12312341234"
               :disabled="isLocked"
             />
           </dd>
@@ -91,6 +162,7 @@ function handleModify() {
           </dt>
           <dd>
             <textarea
+              v-model="userBriefly"
               name=""
               id="bio"
               cols="20"
@@ -100,16 +172,23 @@ function handleModify() {
             ></textarea>
           </dd>
         </dl>
-        <dl>
+        <dl v-if="!isLocked">
           <dt>
-            <label v-if="isLocked" for="password">密码</label>
-            <label v-else for="password">新密码</label>
+            <label for="old-password">旧密码</label>
           </dt>
           <dd>
-            <input type="password" id="password" :disabled="isLocked">
-            <br/>
-
-            
+            <input v-model="password" type="password" name="" id="old-password">
+          </dd>
+        </dl>
+        <dl v-if="!isLocked">
+          <dt>
+            <!-- <label v-if="isLocked" for="password">密码</label> -->
+            <!-- <label v-else for="password">新密码</label> -->
+            <label for="password">新密码</label>
+          </dt>
+          <dd>
+            <input v-model="newPassword" type="password" id="password" :disabled="isLocked" />
+            <br />
           </dd>
         </dl>
         <dl v-if="!isLocked">
@@ -117,7 +196,7 @@ function handleModify() {
             <label for="password-check">确认密码</label>
           </dt>
           <dd>
-            <input type="password" id="password-check" :disabled="isLocked">
+            <input v-model="confirmPassword" type="password" id="password-check" :disabled="isLocked" />
           </dd>
         </dl>
         <dl>
@@ -125,12 +204,7 @@ function handleModify() {
             <label for="city">城市</label>
           </dt>
           <dd>
-            <select
-              v-model="selectedCity"
-              id="city"
-              disabled
-              required
-            >
+            <select v-model="curUser.registeredCityName" id="city" disabled required>
               <option value="" disabled>请选择</option>
               <!-- <option
                 v-if="cityList"
