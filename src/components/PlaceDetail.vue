@@ -60,15 +60,19 @@ watchEffect(async () => {
       <br />
 
       <blockquote>
-        <p class="place-detail-text">{{ welcomeObj.description }}></p>
+        <p class="place-detail-text">{{ welcomeObj.description }}</p>
       </blockquote>
     </div>
 
     <div v-if="place" class="place-detail-actions">
-      <button v-if="atFindPage" class="action-btn">
-        {{ welcomeObj ? "接受" : "修改" }}
+      <!-- 没有响应 -->
+      <button v-if="atFindPage && !welcomeObj" class="action-btn">
+        修改
       </button>
       <button v-if="atFindPage && !welcomeObj" class="action-btn">删除</button>
+      <!-- 有响应之后 -->
+      <button v-if="atFindPage && welcomeObj" class="action-btn">接受</button>
+      <button v-if="atFindPage && welcomeObj" class="action-btn">拒绝</button>
       <button v-if="!atFindPage" class="action-btn">欢迎来</button>
     </div>
   </div>
