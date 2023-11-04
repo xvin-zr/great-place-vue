@@ -1,43 +1,85 @@
 <script setup>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, inject, ref, watch, watchEffect } from "vue";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+const selectedPlace = true;
 const atFindPage = computed(() => {
-    return route.path === '/find-place';
+  return route.path === "/find-place";
 });
 
+const props = defineProps(["selectedPlaceId"]);
+const id = computed(() => props.selectedPlaceId);
+const place = ref(null);
+const welcomeObj = computed(() => place.value?.hyl);
+
+watchEffect(async () => {
+  if (!id.value) return;
+  console.log(id.value);
+  try {
+    const res = await fetch(`${BASE_URL}/xqc/details/${id.value}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      redirect: "follow",
+    });
+    const data = await res.json();
+    console.log(data);
+    place.value = data.data;
+  } catch (error) {
+    console.log(error);
+  }
+});
 </script>
 
-
 <template>
+  <div class="place-detail">
+    <h2 v-if="!place" class="place-detail-title">选择一个去处</h2>
+    <h2 class="place-detail-title">{{ place?.topicName }}</h2>
+    <p v-if="place" class="place-detail-status">状态：{{ place?.status }}</p>
+    <p v-if="place" class="place-detail-status">
+      最高单价：¥{{ place?.maxPrice }} | 结束时间：{{ place?.endTime }}
+    </p>
+    <blockquote>
+      <p class="place-detail-text">{{ place?.description }}</p>
+    </blockquote>
 
-<div class="place-detail">
-        <h2 class="place-detail-title">Place 1</h2>
-        <p class="place-detail-status">状态：未响应</p>
-        <blockquote>
-          <p class="place-detail-text">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum
-            aperiam libero, tempore nam voluptas dolores adipisci earum.
-            Voluptate, facilis repellendus. Quas, necessitatibus reprehenderit.
-            Veritatis perferendis earum suscipit est illum quis.
-          </p>
-        </blockquote>
+    <hr v-if="welcomeObj" />
 
-        <div class="place-detail-actions">
-          <button v-if="atFindPage" class="action-btn">修改</button>
-          <button v-if="atFindPage" class="action-btn">删除</button>
-          <button v-if="!atFindPage" class="action-btn">欢迎来</button>
-        </div>
-      </div>
+    <div v-if="welcomeObj">
+      <h2 class="place-detail-title">欢迎来响应</h2>
+      <br />
+      <p class="place-detail-status">
+        {{
+          welcomeObj.updateTime ? welcomeObj.updateTime : welcomeObj.createTime
+        }}
+      </p>
+      <br />
 
+      <blockquote>
+        <p class="place-detail-text">{{ welcomeObj.description }}></p>
+      </blockquote>
+    </div>
+
+    <div v-if="place" class="place-detail-actions">
+      <button v-if="atFindPage" class="action-btn">
+        {{ welcomeObj ? "接受" : "修改" }}
+      </button>
+      <button v-if="atFindPage && !welcomeObj" class="action-btn">删除</button>
+      <button v-if="!atFindPage" class="action-btn">欢迎来</button>
+    </div>
+  </div>
 </template>
-
 
 <style scoped>
 .place-detail-title {
   font-size: 4.4rem;
+  word-wrap: normal;
+  overflow-wrap: break-word;
+  overflow-block: break-word;
   /* margin-bottom: 2.4rem; */
 }
 
@@ -70,6 +112,12 @@ const atFindPage = computed(() => {
   background-color: #e67e22;
   color: #fff;
   transition: all 0.3s;
+}
+
+hr {
+  border: none;
+  border-top: solid 1px #ccc;
+  width: 100%;
 }
 
 .action-btn:hover {

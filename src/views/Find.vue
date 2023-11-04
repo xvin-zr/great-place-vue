@@ -1,40 +1,53 @@
 <script setup>
 import "./find-welcome.css";
-import { computed, inject, onMounted, reactive, ref, watchEffect } from "vue";
+import { computed, inject, onMounted, provide, reactive, ref, watchEffect } from "vue";
 import PlaceDetail from "../components/PlaceDetail.vue";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const showPublish = inject("showPublish");
 const currPage = ref(1);
-const placeList = reactive([]);
-const pageSize = computed(() => {
-  if (!placeList.length) return 10;
-  return placeList.length;
-});
+const placeList = ref([]);
+const pageSize = 5;
+const totalSize = ref("1");
 const placeType = ref("");
 const topicName = ref("");
 
+const selectedPlaceId = ref(null);
+
 onMounted(() => {
   document.title = "好去处｜寻去处";
-
 });
 
 watchEffect(async function () {
   try {
-    const res = await fetch(`${BASE_URL}/xqc/list?pageNum=${currPage.value}&pageSize=${pageSize.value}&placeType=${placeType.value}&topicName=${topicName.value}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      redirect: "follow",
-    });
+    const res = await fetch(
+      `${BASE_URL}/xqc/list?pageNum=${currPage.value}&pageSize=${pageSize}&placeType=${placeType.value}&topicName=${topicName.value}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow",
+      }
+    );
     const data = await res.json();
     console.log(data);
-    placeList = data.list;
+    const placesData = data.data;
+    placeList.value = placesData.list;
+    totalSize.value = placesData.total;
+    console.log(totalSize.value);
+    console.log(placeList.value);
   } catch (error) {
     console.log(error);
   }
 });
+
+function onClick(place) {
+  selectedPlace.value = place;
+  
+}
+
+
 </script>
 
 <template>
@@ -51,52 +64,41 @@ watchEffect(async function () {
     <section class="place-section">
       <div class="place-lists">
         <ul class="places">
-          <li>
+          <!-- <li>
             <div class="place">
               <h2 class="place-title">Place</h2>
               <p class="place-description">钓鱼</p>
             </div>
-          </li>
-          <li>
+          </li> -->
+          <li @click="selectedPlaceId = place.id" v-for="place in placeList" :key="place.id">
             <div class="place">
-              <h2 class="place-title">Place</h2>
-              <p class="place-description">老少咸宜</p>
-            </div>
-          </li>
-          <li>
-            <div class="place">
-              <h2 class="place-title">Place</h2>
-              <p class="place-description">农家院</p>
-            </div>
-          </li>
-          <li>
-            <div class="place">
-              <h2 class="place-title">Place</h2>
-              <p class="place-description">农家院</p>
-            </div>
-          </li>
-          <li>
-            <div class="place">
-              <h2 class="place-title">Place</h2>
-              <p class="place-description">农家院</p>
+              <h2 class="place-title">{{ place.topicName }}</h2>
+              <p class="place-description">{{ place.placeType }} | {{ place.createTime }}</p>
+
             </div>
           </li>
         </ul>
       </div>
 
       <nav class="place-pagination">
-        <button @click.prevent="currPage > 1 ? currPage-- : currPage" class="pagination-btn pagination-btn-left">
+        <button
+          @click.prevent="currPage > 1 ? currPage-- : currPage"
+          class="pagination-btn pagination-btn-left"
+        >
           <ion-icon class="icon" name="arrow-back-outline"></ion-icon>
         </button>
         <div class="page">
-          <strong>{{ currPage }}</strong> / {{ pageSize }}
+          <strong>{{ currPage }}</strong> / {{ totalSize }}
         </div>
-        <button @click.prevent="currPage < pageSize ? currPage++ : currPage" class="pagination-btn pagination-btn-right">
+        <button
+          @click.prevent="currPage < Number(totalSize) ? currPage++ : currPage"
+          class="pagination-btn pagination-btn-right"
+        >
           <ion-icon class="icon" name="arrow-forward-outline"></ion-icon>
         </button>
       </nav>
 
-      <PlaceDetail />
+      <PlaceDetail :selectedPlaceId="selectedPlaceId" />
     </section>
 
     <section v-if="showPublish" class="section-find-place">

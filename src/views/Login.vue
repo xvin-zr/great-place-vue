@@ -32,12 +32,17 @@ async function onLogin() {
     });
 
     if (!res.ok) {
+      alert("登录失败");
       throw new Error("登录失败");
     }
 
     const data = await res.json();
-    console.log(data);
-    sessionStorage.setItem("token", data.token);
+    if (data.code === 1) {
+      sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("username", username.value);
+      alert("登录成功");
+      toUrl("/find-place");
+    }
   } catch (error) {
     console.log(error);
   }
