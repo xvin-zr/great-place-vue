@@ -17,7 +17,10 @@ const showPublish = inject("showPublish");
 const currPage = ref(1);
 const placeList = ref([]);
 const pageSize = 5;
-const totalSize = ref(1);
+const listLen = ref(1);
+const totalPageSize = computed(() => {
+  return Math.ceil(listLen.value / pageSize);
+})
 const placeType = ref("");
 const topicName = ref("");
 
@@ -44,7 +47,7 @@ watchEffect(async function () {
     console.log(data);
     const placesData = data.data;
     placeList.value = placesData.list;
-    totalSize.value = Math.ceil(placesData.rows / pageSize);
+    listLen.value = placesData.rows;
     console.log(totalSize.value);
     console.log(placeList.value);
   } catch (error) {
@@ -117,6 +120,9 @@ async function onPublishPlace() {
               </p>
             </div>
           </li>
+          <li v-for="i in pageSize - placeList.length">
+            <div class="place"></div>
+          </li>
         </ul>
       </div>
 
@@ -128,7 +134,7 @@ async function onPublishPlace() {
           <ion-icon class="icon" name="arrow-back-outline"></ion-icon>
         </button>
         <div class="page">
-          <strong>{{ currPage }}</strong> / {{ totalSize }}
+          <strong>{{ currPage }}</strong> / {{ totalPageSize }}
         </div>
         <button
           @click.prevent="currPage < Number(totalSize) ? currPage++ : currPage"
