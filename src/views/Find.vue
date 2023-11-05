@@ -10,6 +10,7 @@ import {
   watchEffect,
 } from "vue";
 import PlaceDetail from "../components/PlaceDetail.vue";
+import placeTypeList from "../data/place-type";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const token = sessionStorage.getItem("token");
@@ -20,7 +21,7 @@ const pageSize = 5;
 const listLen = ref(1);
 const totalPageSize = computed(() => {
   return Math.ceil(listLen.value / pageSize);
-})
+});
 const placeType = ref("");
 const topicName = ref("");
 
@@ -48,14 +49,13 @@ watchEffect(async function () {
     const placesData = data.data;
     placeList.value = placesData.list;
     listLen.value = placesData.rows;
-    console.log(totalSize.value);
     console.log(placeList.value);
   } catch (error) {
     console.log(error);
   }
 });
 
-// 发布寻去处
+// 发布寻去处 publish
 async function onPublishPlace() {
   try {
     const res = await fetch(`${BASE_URL}/xqc/save`, {
@@ -74,17 +74,14 @@ async function onPublishPlace() {
         cityCode: "110000",
       }),
       redirect: "follow",
-    })
+    });
     console.log(res);
     const text = await res.text();
     console.log(text);
     // const data = await res.json();
-    
   } catch (error) {
     console.log(error);
-    
   }
-  
 }
 </script>
 
@@ -93,9 +90,18 @@ async function onPublishPlace() {
     <section class="search-section">
       <h2 class="heading-secondary center-text">发现好去处</h2>
       <div class="search-container">
-        <select v-model="placeType" id="place"></select>
+        <select v-model="placeType" id="place" @change="currPage = 1">
+          <option value="" :key="0">所有类型</option>
+          <option
+            v-for="(val, key) in placeTypeList"
+            :key="key"
+            :value="key"
+          >
+            {{ val }}
+          </option>
+        </select>
         <input v-model="topicName" type="text" placeholder="搜索好去处" />
-        <button class="btn--search">Search</button>
+        <!-- <button class="btn--search">Search</button> -->
       </div>
     </section>
 
@@ -116,11 +122,11 @@ async function onPublishPlace() {
             <div class="place">
               <h2 class="place-title">{{ place.topicName }}</h2>
               <p class="place-description">
-                {{ place.placeType }} | {{ place.createTime }}
+                {{ placeTypeList[place.placeType] }} | {{ place.createTime }}
               </p>
             </div>
           </li>
-          <li v-for="i in pageSize - placeList.length">
+          <li v-for="i in pageSize - placeList.length" :key="`empty${i}`">
             <div class="place"></div>
           </li>
         </ul>
@@ -134,10 +140,10 @@ async function onPublishPlace() {
           <ion-icon class="icon" name="arrow-back-outline"></ion-icon>
         </button>
         <div class="page">
-          <strong>{{ currPage }}</strong> / {{ totalPageSize }}
+          <strong>{{ totalPageSize === 0 ? 0 : currPage }}</strong> / {{ totalPageSize }}
         </div>
         <button
-          @click.prevent="currPage < Number(totalSize) ? currPage++ : currPage"
+          @click.prevent="currPage < totalPageSize ? currPage++ : currPage"
           class="pagination-btn pagination-btn-right"
         >
           <ion-icon class="icon" name="arrow-forward-outline"></ion-icon>

@@ -40,11 +40,14 @@ async function onLogin() {
     const data = await res.json();
     // const text = await res.text();
     // console.log(text);
+    console.log("login", data);
     if (data.code === 1) {
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("username", username.value);
       alert("登录成功");
       toUrl("/find-place");
+    } else {
+      // alert("登录失败");
     }
   } catch (error) {
     console.log(error);

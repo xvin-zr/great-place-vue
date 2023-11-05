@@ -1,6 +1,10 @@
 <script setup>
 import { computed, inject, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
+import myHeaders from "../data/headers";
+import { getNormalDate } from "../methos/date";
+import placeTypeList from "../data/place-type";
+import statusList from "../data/status";
 
 const route = useRoute();
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -34,15 +38,33 @@ watchEffect(async () => {
     console.log(error);
   }
 });
+
+async function onDeletePlace() {
+  try {
+    const res = await fetch(`${BASE_URL}/xqc/delete/${id.value}`, {
+      method: "DELETE",
+      headers: myHeaders,
+      redirect: "follow",
+    });
+    const data = await res.json();
+    console.log("delete", data);
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>
 
 <template>
   <div class="place-detail">
     <h2 v-if="!place" class="place-detail-title">选择一个去处</h2>
     <h2 class="place-detail-title">{{ place?.topicName }}</h2>
-    <p v-if="place" class="place-detail-status">状态：{{ place?.status }}</p>
     <p v-if="place" class="place-detail-status">
-      最高单价：¥{{ place?.maxPrice }} | 结束时间：{{ place?.endTime }}
+      状态：{{ statusList[place?.status] }}
+    </p>
+    <p v-if="place" class="place-detail-status">
+      最高单价：¥{{ place?.maxPrice }} | 结束时间：{{
+        getNormalDate(place?.endTime)
+      }}
     </p>
     <blockquote>
       <p class="place-detail-text">{{ place?.description }}</p>
@@ -55,7 +77,9 @@ watchEffect(async () => {
       <br />
       <p class="place-detail-status">
         {{
-          welcomeObj.updateTime ? welcomeObj.updateTime : welcomeObj.createTime
+          welcomeObj.updateTime
+            ? getNormalDate(welcomeObj.updateTime)
+            : getNormalDate(welcomeObj.createTime)
         }}
       </p>
       <br />
@@ -65,11 +89,9 @@ watchEffect(async () => {
       </blockquote>
     </div>
 
-    <div v-if="place" class="place-detail-actions">
+    <div v-if="place && place?.status === '2'" class="place-detail-actions">
       <!-- 没有响应 -->
-      <button v-if="atFindPage && !welcomeObj" class="action-btn">
-        修改
-      </button>
+      <button v-if="atFindPage && !welcomeObj" class="action-btn">修改</button>
       <button v-if="atFindPage && !welcomeObj" class="action-btn">删除</button>
       <!-- 有响应之后 -->
       <button v-if="atFindPage && welcomeObj" class="action-btn">接受</button>
