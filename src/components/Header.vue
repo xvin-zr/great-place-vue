@@ -24,7 +24,7 @@ const username = sessionStorage.getItem("username");
       <ion-icon class="icon--header" name="compass-outline"></ion-icon>
       <!-- <h2>好去处</h2> -->
     </a>
-    <span class="header-name">欢迎{{ username ? `，${username}` : ""}}</span>
+    <span class="header-name">欢迎{{ username ? `，${username.toUpperCase()}` : ""}}</span>
     <nav class="main-nav">
       <ul class="main-nav-list">
         <li>
