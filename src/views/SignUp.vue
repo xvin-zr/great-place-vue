@@ -1,6 +1,6 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
-import { cities } from "../data/city.js";
+import { computed, onMounted, ref ,watchEffect} from "vue";
+import   {cities}   from "../data/area-city.js";
 
 onMounted(() => {
   document.title = "好去处｜注册";
@@ -8,14 +8,59 @@ onMounted(() => {
 
 const username = ref("");
 const password = ref("");
-const phoneNum = ref(null);
+const phoneNumber = ref(null);
 const province = ref("");
 const userType = ref("");
 const cityList = computed(() => {
-  return cities.find((item) => item.province === province.value)?.cities;
+  return cities.find(item => item.name === province.value)?.districts;
 });
-const selectedCity = ref("");
-console.log(cityList.value);
+const registeredCityName = ref("");
+const name=ref("")
+const idCardType=ref("")
+const idCard=ref("")
+const userLevel=ref("")
+const registeredCityCode=computed(() => {
+  return cityList.find( item => item.name === registeredCityName.value)?.adcode;
+})
+watchEffect(() => {
+  console.log(username.value)
+})
+async function sign(){
+  try {
+    const res = await fetch(`${BASE_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+        userType: userType.value,
+        name: name.value,
+        idCardType: idCardType.value,
+        idCard: idCard.value,
+        phoneNumber: phoneNumber.value,
+        userLevel: userLevel.value,
+        userBriefly: "",
+        registeredCityCode: registeredCityCode,
+        registeredCityName: registeredCityName.value,
+      }),
+      redirect: "follow",
+    });
+
+    if (!res.ok) {
+      throw new Error("注册失败");
+    }
+
+    const res_data = await res.json();
+    console.log(res_data);
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 </script>
 
 <template>
@@ -56,43 +101,40 @@ console.log(cityList.value);
                     required
                   />
                 </div>
+
                 <div>
                   <label for="province">省*</label>
                   <select v-model="province" id="province" required>
                     <option value="" disabled>请选择</option>
                     <option
-                      v-for="{ province } in cities"
-                      :value="province"
-                      :key="province"
+                      v-for="item in cities"
+                      :value="item.name"
+                      :key="item.name"
                     >
-                      {{ province }}
+                      {{ item.name }}
                     </option>
-                    <!-- <option value="friends">Friends and family</option>
-                      <option value="youtube">YouTube video</option>
-                      <option value="podcast">Podcast</option>
-                      <option value="ad">Facebook ad</option>
-                      <option value="others">Others</option> -->
+            
                   </select>
                 </div>
 
                 <div>
                   <label for="city">市*</label>
-                  <select v-model="selectedCity" id="city" required>
+                  <select v-model="registeredCityName" id="city" required>
                     <option value="" disabled>请选择</option>
                     <option
                       v-if="cityList"
-                      v-for="city in cityList"
-                      :value="city"
-                      :key="city"
+                      v-for="item in cityList"
+                      :value="item.name"
+                      :key="item.name"
                     >
-                      {{ city }}
+                      {{ item.name }}
                     </option>
                   </select>
                 </div>
 
                 <div>
                   <label for="license-type">证件类型*</label>
-                  <select id="license-type" required>
+                  <select v-model="idCardType" id="license-type" required>
                     <option value="id">身份证</option>
                     <option value="passport">护照</option>
                   </select>
@@ -100,7 +142,7 @@ console.log(cityList.value);
 
                 <div>
                   <label for="license-number">证件号*</label>
-                  <input type="text" id="license-number" required />
+                  <input v-model="idCard" type="text" id="license-number" required />
                 </div>
 
                 <div>
@@ -123,13 +165,13 @@ console.log(cityList.value);
 
                 <div>
                   <label for="name">姓名*</label>
-                  <input type="text" id="name" placeholder="xxx" required />
+                  <input v-model="name" type="text" id="name" placeholder="xxx" required />
                 </div>
 
                 <div>
                   <label for="phone">联系电话*</label>
                   <input
-                    v-model="phoneNum"
+                    v-model="phoneNumber"
                     id="phone"
                     type="number"
                     placeholder="+86"
@@ -140,6 +182,7 @@ console.log(cityList.value);
                 <div>
                   <label for="user-level">用户级别</label>
                   <select
+                    v-model="userLevel"
                     name=""
                     id="user-level"
                     :disabled="userType !== 'user'"
@@ -150,12 +193,8 @@ console.log(cityList.value);
                   </select>
                 </div>
 
-                <button class="btn btn--form">注册</button>
+                <button @click="sign()" class="btn btn--form">注册</button>
 
-                <!-- <button class="btn btn--form">登录</button> -->
-
-                <!-- <input type="checkbox" />
-                <input type="number" /> -->
               </form>
             </div>
             <div

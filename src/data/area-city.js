@@ -1,4 +1,5 @@
-export default cityList = [
+
+const cities = [
   {
     citycode: [],
     adcode: "410000",
@@ -3465,3 +3466,4 @@ export default cityList = [
     ],
   },
 ];
+export   {cities } ;
