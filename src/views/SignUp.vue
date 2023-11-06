@@ -1,7 +1,7 @@
 <script setup>
-import { computed, onMounted, ref ,watchEffect} from "vue";
+import { computed, onMounted, ref } from "vue";
 import   {cities}   from "../data/area-city.js";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 onMounted(() => {
   document.title = "好去处｜注册";
 });
@@ -19,13 +19,11 @@ const name=ref("")
 const idCardType=ref("")
 const idCard=ref("")
 const userLevel=ref("")
-const registeredCityCode=computed(() => {
-  return cityList.find( item => item.name === registeredCityName.value)?.adcode;
+const registeredCityCode = computed(() => {
+  return cityList.value.find( item => item.name === registeredCityName.value)?.adcode;
 })
-watchEffect(() => {
-  console.log(username.value)
-})
-async function sign(){
+
+const sign = async () => {
   try {
     const res = await fetch(`${BASE_URL}/register`, {
       method: "POST",
@@ -33,7 +31,7 @@ async function sign(){
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: username.value,
+        userName: username.value,
         password: password.value,
         userType: userType.value,
         name: name.value,
@@ -42,7 +40,7 @@ async function sign(){
         phoneNumber: phoneNumber.value,
         userLevel: userLevel.value,
         userBriefly: "",
-        registeredCityCode: registeredCityCode,
+        registeredCityCode: registeredCityCode.value,
         registeredCityName: registeredCityName.value,
       }),
       redirect: "follow",
@@ -54,7 +52,7 @@ async function sign(){
 
     const res_data = await res.json();
     console.log(res_data);
-    
+
   } catch (error) {
     console.log(error);
   }
@@ -135,8 +133,8 @@ async function sign(){
                 <div>
                   <label for="license-type">证件类型*</label>
                   <select v-model="idCardType" id="license-type" required>
-                    <option value="id">身份证</option>
-                    <option value="passport">护照</option>
+                    <option value="1">身份证</option>
+                    <option value="2">护照</option>
                   </select>
                 </div>
 
@@ -149,8 +147,8 @@ async function sign(){
                   <label for="user-type">用户类型*</label>
                   <select v-model="userType" id="user-type" required>
                     <option value="" disabled>请选择</option>
-                    <option value="user">普通用户</option>
-                    <option value="admin">管理员</option>
+                    <option value="2">普通用户</option>
+                    <option value="1">管理员</option>
                   </select>
                 </div>
 
@@ -185,15 +183,15 @@ async function sign(){
                     v-model="userLevel"
                     name=""
                     id="user-level"
-                    :disabled="userType !== 'user'"
+                    :disabled="userType !== '2'"
                     required
                   >
-                    <option value="normal">一般用户</option>
-                    <option value="vip">VIP 用户</option>
+                    <option value="1">一般用户</option>
+                    <option value="2">VIP 用户</option>
                   </select>
                 </div>
 
-                <button @click="sign()" class="btn btn--form">注册</button>
+                <button @click.prevent="sign" class="btn btn--form">注册</button>
 
               </form>
             </div>
