@@ -25,23 +25,37 @@ async function onLogin() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: username.value,
-        password: password.value,
+        userName: username.value,
+        passWord: password.value
       }),
       redirect: "follow",
     });
 
     if (!res.ok) {
+      alert("登录失败");
       throw new Error("登录失败");
     }
+    console.log(res);
 
     const data = await res.json();
-    console.log(data);
-    sessionStorage.setItem("token", data.token);
+    // const text = await res.text();
+    // console.log(text);
+    console.log("login", data);
+    if (data.code === 1) {
+      sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("username", username.value);
+      alert("登录成功");
+      toUrl("/find-place");
+    } else {
+      // alert("登录失败");
+    }
   } catch (error) {
     console.log(error);
   }
 }
+
+
+// onPublishPlace();
 </script>
 
 <template>
