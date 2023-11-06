@@ -95,11 +95,11 @@ async function onLogin() {
                 />
               </div>
 
-              <!-- <RouterLink to="/signup"> -->
+              
               <button @click.prevent="toUrl('/signup')" class="btn btn--form">
                 注册
               </button>
-              <!-- </RouterLink> -->
+              
 
               <button @click.prevent="onLogin" class="btn btn--form">
                 登录

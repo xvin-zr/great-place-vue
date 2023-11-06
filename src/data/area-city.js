@@ -1,4 +1,5 @@
-const cityList = [
+
+const cities = [
   {
     citycode: [],
     adcode: "410000",
@@ -3465,4 +3466,4 @@ const cityList = [
     ],
   },
 ];
-export default cityList;
+export   {cities } ;
