@@ -9,18 +9,15 @@ const token = sessionStorage.getItem("token");
 // const id = ref("");
 // const userName = ref("");
 const password = ref("");
-// const userType = ref("");
+const userLevel = computed(() => {
+  return curUser.value.userLevel && "";
+});
 // const name = ref("");
 // const idCardType = ref("");
 // const idCard = ref("");
-const phoneNumber = computed(() => {
-  return curUser.value.phoneNumber ? curUser.value.phoneNumber : "";
-});
+const phoneNumber = ref("");
 // const userLevel = ref("");
-const userBriefly = computed(() => {
-  
-  return curUser.value.userBriefly ? curUser.value.userBriefly : "";
-});
+const userBriefly = ref("");
 // const registeredCityCode = ref("");
 // const registeredCityName = ref("");
 // const createTime = ref("");
@@ -33,52 +30,45 @@ const curUser = ref({});
 onMounted(function () {
   document.title = "好去处｜个人信息";
 
-  async function getUserInfo() {
-    try {
-      const res = await fetch(`${BASE_URL}/getUserDetails/userId`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        redirect: "follow",
-      });
-      const data = await res.json();
-      console.log("profile", data);
-      curUser.value = data.data;
-      // id.value = curUser.id;
-      // userName.value = curUser.userName;
-      // // password.value = curUser.password;
-      // userType.value = curUser.userType;
-      // name.value = curUser.name;
-      // idCardType.value = curUser.idCardType;
-      // idCard.value = curUser.idCard;
-      // phoneNumber.value = curUser.phoneNumber;
-      // userLevel.value = curUser.userLevel;
-      // userBriefly.value = curUser.userBriefly;
-      // registeredCityCode.value = curUser.registeredCityCode;
-      // registeredCityName.value = curUser.registeredCityName;
-      // createTime.value = curUser.createTime;
-      // updateTime.value = curUser.updateTime;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   getUserInfo();
 });
 
 const isLocked = ref(true);
 const province = ref("");
-const cityList = computed(() => {
-  return cities.find((item) => item.province === province.value)?.cities;
-});
-const selectedCity = ref("");
+// const cityList = computed(() => {
+//   return cities.find((item) => item.province === province.value)?.cities;
+// });
+// const selectedCity = ref("");
+
+async function getUserInfo() {
+  try {
+    const res = await fetch(`${BASE_URL}/getUserDetails/userId`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      redirect: "follow",
+    });
+    const data = await res.json();
+    console.log("profile", data);
+    curUser.value = data.data;
+    userBriefly.value = curUser.value.userBriefly ?? "";
+    phoneNumber.value = curUser.value.phoneNumber;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function handleModify() {
   if (isLocked.value) {
     isLocked.value = false;
   } else {
+    if (!confirm("确认修改个人信息吗？")) {
+      getUserInfo();
+      isLocked.value = true;
+      return;
+    }
     // 验证用户输入合法
     const res = await fetch(`${BASE_URL}/updateUser`, {
       method: "PUT",
@@ -87,7 +77,7 @@ async function handleModify() {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        ...curUser,
+        ...curUser.value,
         phoneNumber: phoneNumber.value,
         userBriefly: userBriefly.value,
         password: password.value ? password.value : curUser.value.password,
@@ -107,7 +97,7 @@ async function handleModify() {
 <template>
   <main class="profile-main">
     <h2 class="profile-heading center-text">
-      个人信息 {{ userType ? `(${userType})` : "" }}
+      个人信息 {{ userLevel === "2" ? `VIP` : "" }}
     </h2>
 
     <section class="profile-info">
@@ -120,6 +110,7 @@ async function handleModify() {
             <input
               type="text"
               id="username"
+              name="username"
               :value="curUser.userName"
               disabled
             />
@@ -171,7 +162,7 @@ async function handleModify() {
           <dd>
             <input
               v-model="phoneNumber"
-              type="number"
+              type="text"
               id="phone-number"
               length="11"
               :disabled="isLocked"

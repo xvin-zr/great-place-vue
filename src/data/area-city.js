@@ -3175,7 +3175,7 @@ const cities = [
       {
         citycode: "010",
         adcode: "110100",
-        name: "北京城区",
+        name: "北京市",
         center: "116.405285,39.904989",
         level: "city",
         districts: [],

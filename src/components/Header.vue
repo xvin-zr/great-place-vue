@@ -13,7 +13,8 @@ function handleClickFindPlace() {
   }
 }
 
-const isAdmin = computed(() => route.path === "/admin");
+console.log(route.path);
+const isAdmin = computed(() => route.path.includes("admin"));
 
 const username = sessionStorage.getItem("username");
 </script>

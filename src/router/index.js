@@ -36,15 +36,15 @@ const routes = [
         component: () => import("../views/Statistics.vue"),
       },
       {
-        path: "/statistics",
+        path: "statistics",
         component: () => import("../views/Statistics.vue"),
       },
       {
-        path: "/request",
+        path: "request",
         component: () => import("../views/Request.vue"),
       },
       {
-        path: "/response",
+        path: "response",
         component: () => import("../views/Response.vue"),
       },
     ],
