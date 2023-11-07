@@ -20,8 +20,6 @@ const ctx = ref(null);
 const successData = inject("successData");
 const feesData = inject("feesData");
 
-
-
 onMounted(() => {
   ctx.value = document.getElementById("lineChart");
 });
@@ -30,24 +28,28 @@ watchEffect(() => {
   console.log(successData.value, feesData.value);
   if (!ctx.value) return;
   // if (!lineChart.value) return;
-  if (lineChart.value)
-    lineChart.value.destroy();
-  const labels = Object.keys(successData.value);
+  if (lineChart.value) lineChart.value.destroy();
+  if (!successData.value || !feesData.value) return;
+  const { completeSuccessData, completeFeesData } = getCompleteData(
+    successData.value,
+    feesData.value
+  );
+  const labels = Object.keys(completeSuccessData);
   const data = {
     labels: labels,
     datasets: [
       {
         label: "累计成交单数",
-        data: Object.values(successData.value),
-        borderColor: "rgba(75, 192, 192, 1)",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        data: Object.values(completeSuccessData),
+        borderColor: "rgba(40, 175, 176, 1)",
+        backgroundColor: "rgba(40, 175, 176, 0.2)",
         yAxisID: "y",
       },
       {
-        label: "中介费金额",
-        data: Object.values(feesData.value),
-        borderColor: "rgba(192, 75, 192, 1)",
-        backgroundColor: "rgba(192, 75, 192, 0.2)",
+        label: "中介费金额（元）",
+        data: Object.values(completeFeesData),
+        borderColor: "rgba(182, 36, 79, 1)",
+        backgroundColor: "rgba(182, 36, 79, 0.2)",
         yAxisID: "y1",
       },
     ],
@@ -65,7 +67,7 @@ watchEffect(() => {
       plugins: {
         title: {
           display: true,
-          text: "Chart.js Line Chart - Multi Axis",
+          text: "累计成交单数及中介费金额趋势",
         },
       },
       scales: {
@@ -98,6 +100,27 @@ watchEffect(() => {
     },
   };
   lineChart.value = new Chart(ctx.value, config);
-  
 });
+
+function getCompleteData(successData, feesData) {
+  // console.log(successData, feesData);
+  const minMonth = Math.min(...Object.keys(successData));
+  const maxMonth = Math.max(...Object.keys(successData));
+
+  const months = [];
+  for (let i = minMonth; i <= maxMonth; i++) {
+    months.push(i);
+  }
+
+  const completeSuccessData = {};
+  const completeFeesData = {};
+
+  months.forEach((month) => {
+    completeSuccessData[month] = successData[month] || 0;
+    completeFeesData[month] = feesData[month] || 0;
+  });
+
+
+  return { completeSuccessData, completeFeesData };
+}
 </script>
