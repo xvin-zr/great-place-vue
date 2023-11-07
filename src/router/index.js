@@ -28,6 +28,28 @@ const routes = [
     ],
   },
   {
+    path: "/admin",
+    component: () => import("../views/Admin.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("../views/Statistics.vue"),
+      }, 
+      {
+        path: "/statistics",
+        component: () => import("../views/Statistics.vue"),
+      },
+      {
+        path: "/request",
+        component: () => import("../views/Request.vue"),
+      },
+      {
+        path: "/response",
+        component: () => import("../views/Response.vue"),
+      }
+    ]
+  },
+  {
     path: "/:pathMatch(.*)*",
     component: () => import("../views/NotFound.vue"),
   },

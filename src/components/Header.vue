@@ -1,21 +1,21 @@
 <script setup>
-import { inject } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, inject } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
 const showPublish = inject("showPublish");
 function handleClickFindPlace() {
-  if (route.path === '/find-place')  {
+  if (route.path === "/find-place") {
     showPublish.value = true;
   } else {
-    router.push('/find-place');
+    router.push("/find-place");
   }
-
 }
 
-const username = sessionStorage.getItem("username");
+const isAdmin = computed(() => route.path === "/admin");
 
+const username = sessionStorage.getItem("username");
 </script>
 
 <template>
@@ -24,8 +24,10 @@ const username = sessionStorage.getItem("username");
       <ion-icon class="icon--header" name="compass-outline"></ion-icon>
       <!-- <h2>好去处</h2> -->
     </a>
-    <span class="header-name">欢迎{{ username ? `，${username.toUpperCase()}` : ""}}</span>
-    <nav class="main-nav">
+    <span class="header-name"
+      >欢迎{{ username ? `，${username.toUpperCase()}` : "" }}</span
+    >
+    <nav v-if="!isAdmin" class="main-nav">
       <ul class="main-nav-list">
         <li>
           <RouterLink
@@ -37,15 +39,11 @@ const username = sessionStorage.getItem("username");
           >
         </li>
         <li>
-          <a active-class="active-link" class="main-nav-link" href="#">Meals</a>
-        </li>
-        <li>
-          <a active-class="active-link" class="main-nav-link" href="#"
-            >Testimonials</a
-          >
-        </li>
-        <li>
-          <RouterLink to="/find-place/welcome" active-class="active-link" class="main-nav-link" href="#"
+          <RouterLink
+            to="/find-place/welcome"
+            active-class="active-link"
+            class="main-nav-link"
+            href="#"
             >欢迎来</RouterLink
           >
         </li>
@@ -57,6 +55,19 @@ const username = sessionStorage.getItem("username");
             @click.prevent="handleClickFindPlace"
             >寻去处</a
           >
+        </li>
+      </ul>
+    </nav>
+    <nav v-else>
+      <ul class="main-nav-list">
+        <li>
+          <RouterLink
+            to="/admin/statistics"
+            active-class="active-link"
+            class="main-nav-link"
+          >
+            数据统计
+          </RouterLink>
         </li>
       </ul>
     </nav>

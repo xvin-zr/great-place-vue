@@ -92,7 +92,7 @@ async function onDeletePlace() {
     <div v-if="place && place?.status === '2'" class="place-detail-actions">
       <!-- 没有响应 -->
       <button v-if="atFindPage && !welcomeObj" class="action-btn">修改</button>
-      <button v-if="atFindPage && !welcomeObj" class="action-btn">删除</button>
+      <button v-if="atFindPage && !welcomeObj" class="action-btn" @click.prevent="onDeletePlace">删除</button>
       <!-- 有响应之后 -->
       <button v-if="atFindPage && welcomeObj" class="action-btn">接受</button>
       <button v-if="atFindPage && welcomeObj" class="action-btn">拒绝</button>
