@@ -1,5 +1,5 @@
 <script setup>
-import { computed, provide, ref, watch, watchEffect } from "vue";
+import { computed, onMounted, provide, ref, watch, watchEffect } from "vue";
 import myHeaders from "../data/headers";
 import { getYearMonth } from "../methos/date";
 import placeTypeList from "../data/place-type";
@@ -42,6 +42,9 @@ const feesData = computed(() => {
 provide("successData", successData);
 provide("feesData", feesData);
 
+onMounted(() => {
+  getInvoiceDetails();
+})
 watchEffect(() => {
   getInvoiceDetails();
 });

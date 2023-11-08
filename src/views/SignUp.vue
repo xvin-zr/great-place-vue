@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import   {cities}   from "../data/area-city.js";
+import { cities } from "../data/area-city.js";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 onMounted(() => {
   document.title = "好去处｜注册";
@@ -12,16 +12,17 @@ const phoneNumber = ref(null);
 const province = ref("");
 const userType = ref("");
 const cityList = computed(() => {
-  return cities.find(item => item.name === province.value)?.districts;
+  return cities.find((item) => item.name === province.value)?.districts;
 });
 const registeredCityName = ref("");
-const name=ref("")
-const idCardType=ref("")
-const idCard=ref("")
-const userLevel=ref("")
+const name = ref("");
+const idCardType = ref("");
+const idCard = ref("");
+const userLevel = ref("");
 const registeredCityCode = computed(() => {
-  return cityList.value.find( item => item.name === registeredCityName.value)?.adcode;
-})
+  return cityList.value.find((item) => item.name === registeredCityName.value)
+    ?.adcode;
+});
 
 const sign = async () => {
   try {
@@ -52,13 +53,10 @@ const sign = async () => {
 
     const res_data = await res.json();
     console.log(res_data);
-
   } catch (error) {
     console.log(error);
   }
-}
-
-
+};
 </script>
 
 <template>
@@ -111,7 +109,6 @@ const sign = async () => {
                     >
                       {{ item.name }}
                     </option>
-            
                   </select>
                 </div>
 
@@ -140,7 +137,12 @@ const sign = async () => {
 
                 <div>
                   <label for="license-number">证件号*</label>
-                  <input v-model="idCard" type="text" id="license-number" required />
+                  <input
+                    v-model="idCard"
+                    type="text"
+                    id="license-number"
+                    required
+                  />
                 </div>
 
                 <div>
@@ -163,7 +165,13 @@ const sign = async () => {
 
                 <div>
                   <label for="name">姓名*</label>
-                  <input v-model="name" type="text" id="name" placeholder="xxx" required />
+                  <input
+                    v-model="name"
+                    type="text"
+                    id="name"
+                    placeholder="xxx"
+                    required
+                  />
                 </div>
 
                 <div>
@@ -191,8 +199,9 @@ const sign = async () => {
                   </select>
                 </div>
 
-                <button @click.prevent="sign" class="btn btn--form">注册</button>
-
+                <button @click.prevent="sign" class="btn btn--form">
+                  注册
+                </button>
               </form>
             </div>
             <div
