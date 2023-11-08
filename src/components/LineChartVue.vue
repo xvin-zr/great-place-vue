@@ -1,10 +1,11 @@
 <script setup>
-import { inject, onMounted, ref, render, watchEffect } from "vue";
+import { computed, inject, onMounted, ref, render, watchEffect } from "vue";
 import * as echarts from "echarts";
 
 const successData = inject("successData");
 const feesData = inject("feesData");
 const lineChart = ref(null);
+const hasNoData = computed(() => !Object.entries(successData.value).length && !Object.entries(feesData.value).length);
 
 onMounted(() => {
   lineChart.value = echarts.init(document.getElementById("lineChart"), null, {
@@ -113,6 +114,7 @@ function getCompleteData(successData, feesData) {
 
 <template>
   <section class="line-chart-section">
+    <h2 v-if="hasNoData">暂无数据！</h2>
     <div id="lineChart"></div>
   </section>
 </template>
@@ -121,11 +123,20 @@ function getCompleteData(successData, feesData) {
 .line-chart-section {
   height: 100vh;
   padding: 32px;
+  margin: 0 auto;
 }
 
 .line-chart-section div {
   height: 100%;
   width: 90%;
   margin: 0 auto;
+}
+
+h2 {
+  font-size: 3.6rem;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 32px;
 }
 </style>
