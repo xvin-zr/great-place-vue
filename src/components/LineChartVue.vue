@@ -14,7 +14,10 @@ onMounted(() => {
 
 watchEffect(() => {
   if (!lineChart.value) return;
-  const [ completeSuccessData, completeFeesData ] = [successData.value, feesData.value];
+  const [completeSuccessData, completeFeesData] = [
+    successData.value,
+    feesData.value,
+  ];
   const option = {
     title: {
       text: "成交单数与中介费",
@@ -27,7 +30,7 @@ watchEffect(() => {
       },
     },
     legend: {
-      data: ["成交单数", "中介费金额（元）"],
+      data: ["成交单数", "中介费金额"],
     },
     grid: {
       left: "3%",
@@ -42,29 +45,43 @@ watchEffect(() => {
     },
     xAxis: {
       type: "category",
+      name: "月份",
       boundaryGap: false,
       data: Object.keys(completeSuccessData),
     },
     yAxis: [
       {
-        type: "category",
+        type: "value",
+        name: "成交单数",
+        min: 0,
+        position: "left",
+        interval: 1,
+        axisLabel: {
+          formatter: "{value}",
+        },
       },
-      //   {
-      //     type: "value",
-      //     name: "2",
-      //   },
+      {
+        type: "value",
+        name: "中介费金额",
+        min: 0,
+        position: "right",
+        axisLabel: {
+          formatter: "{value} 元",
+        },
+      },
     ],
     series: [
       {
         name: "成交单数",
         type: "line",
-        stack: "Total",
+        yAxisIndex: 0,
         data: Object.values(completeSuccessData),
       },
       {
-        name: "中介费金额（元）",
+        name: "中介费金额",
         type: "line",
-        stack: "Total",
+        yAxisIndex: 1,
+        smooth: true,
         data: Object.values(completeFeesData),
       },
     ],
