@@ -7,6 +7,13 @@ function getNormalDate(dateStr) {
   return `${year}/${month}/${day}`;
 }
 
+function getYear(dateStr) {
+  const dateObject = new Date(dateStr);
+  const year = dateObject.getFullYear();
+
+  return ""+year;
+}
+
 function getYearMonth(offset = 0) {
   const dateObject = new Date();
   dateObject.setMonth(dateObject.getMonth() + offset);
@@ -15,4 +22,4 @@ function getYearMonth(offset = 0) {
   return `${year}-${month}`;
 }
 
-export { getNormalDate, getYearMonth };
+export { getNormalDate, getYearMonth, getYear };

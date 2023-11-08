@@ -53,6 +53,10 @@ const sign = async () => {
 
     const res_data = await res.json();
     console.log(res_data);
+    if (res_data.flag === "1") {
+      alert("注册成功");
+
+    }
   } catch (error) {
     console.log(error);
   }

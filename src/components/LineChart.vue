@@ -11,11 +11,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watchEffect, inject, computed } from "vue";
+import { onMounted, ref, watchEffect, inject, computed, nextTick } from "vue";
 import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
-const lineChart = ref(null);
+const myLineChart = ref(null);
 const ctx = ref(null);
 const successData = inject("successData");
 const feesData = inject("feesData");
@@ -25,15 +25,27 @@ onMounted(() => {
 });
 
 watchEffect(() => {
+  if (
+    Object.entries(successData.value).length === 0 ||
+    Object.entries(feesData.value).length === 0
+  ) {
+    return;
+  }
+  // await nextTick(() => {
+  // ctx.value = document.getElementById("lineChart");
+  // });
+
   console.log(successData.value, feesData.value);
+
   if (!ctx.value) return;
   // if (!lineChart.value) return;
-  if (lineChart.value) lineChart.value.destroy();
+  // if (myLineChart.value) myLineChart.value.destroy();
   if (!successData.value || !feesData.value) return;
   const { completeSuccessData, completeFeesData } = getCompleteData(
     successData.value,
     feesData.value
   );
+  console.log(completeSuccessData, completeFeesData);
   const labels = Object.keys(completeSuccessData);
   const data = {
     labels: labels,
@@ -99,7 +111,17 @@ watchEffect(() => {
       },
     },
   };
-  lineChart.value = new Chart(ctx.value, config);
+  // await nextTick(() => {
+
+  // });
+  if (myLineChart.value) {
+    console.log(myLineChart.value);
+    myLineChart.value.destroy();
+  }
+  ctx.value = document.getElementById("lineChart");
+  myLineChart.value = new Chart(ctx.value, config);
+  // console.log(myLineChart.value);
+  // myLineChart.value.destroy()
 });
 
 function getCompleteData(successData, feesData) {
@@ -119,7 +141,6 @@ function getCompleteData(successData, feesData) {
     completeSuccessData[month] = successData[month] || 0;
     completeFeesData[month] = feesData[month] || 0;
   });
-
 
   return { completeSuccessData, completeFeesData };
 }

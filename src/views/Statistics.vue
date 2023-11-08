@@ -1,11 +1,12 @@
 <script setup>
 import { computed, onMounted, provide, ref, watch, watchEffect } from "vue";
 import myHeaders from "../data/headers";
-import { getYearMonth } from "../methos/date";
+import { getYearMonth, getYear } from "../methos/date";
 import placeTypeList from "../data/place-type";
 import "./find-welcome.css";
 import { cities } from "../data/area-city";
-import LineChart from "../components/LineChart.vue";
+// import LineChart from "../components/LineChart.vue";
+import LineChartVue from "../components/LineChartVue.vue";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const DEFAULT_OFFSET = -3;
@@ -25,16 +26,18 @@ const invoices = ref([]);
 
 const successData = computed(() => {
   return invoices.value.reduce((acc, cur) => {
-    acc[cur.monthStringToInt] =
-      (acc[cur.monthStringToInt] || 0) + cur.successTotal;
+    const time = getYear(cur.createTime) + "-" + cur.month.padStart(2, "0");
+    acc[time] =
+      (acc[time] || 0) + cur.successTotal;
     return acc;
   }, {});
 });
 
 const feesData = computed(() => {
   return invoices.value.reduce((acc, cur) => {
-    acc[cur.monthStringToInt] =
-      (acc[cur.monthStringToInt] || 0) + cur.intermediaryFees;
+    const time = getYear(cur.createTime) + "-" + cur.month.padStart(2, "0");
+    acc[time] =
+      (acc[time] || 0) + cur.intermediaryFees;
     return acc;
   }, {});
 });
@@ -67,6 +70,7 @@ async function getInvoiceDetails() {
     if (!data.data) {
       invoices.value = [];
       alert("没有数据");
+      return;
     }
     invoices.value = [...data.data].sort((a, b) => {
       return a.monthStringToInt - b.monthStringToInt;
@@ -141,7 +145,7 @@ async function getInvoiceDetails() {
     </table>
   </section>
 
-  <LineChart></LineChart>
+  <LineChartVue></LineChartVue>
 </template>
 
 <style scoped>
