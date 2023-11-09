@@ -40,6 +40,9 @@ watchEffect(async () => {
 });
 
 async function onDeletePlace() {
+  if (!confirm("确认删除?")) {
+    return;
+  }
   try {
     const res = await fetch(`${BASE_URL}/xqc/delete/${id.value}`, {
       method: "DELETE",
@@ -92,7 +95,13 @@ async function onDeletePlace() {
     <div v-if="place && place?.status === '2'" class="place-detail-actions">
       <!-- 没有响应 -->
       <button v-if="atFindPage && !welcomeObj" class="action-btn">修改</button>
-      <button v-if="atFindPage && !welcomeObj" class="action-btn" @click.prevent="onDeletePlace">删除</button>
+      <button
+        v-if="atFindPage && !welcomeObj"
+        class="action-btn"
+        @click.prevent="onDeletePlace"
+      >
+        删除
+      </button>
       <!-- 有响应之后 -->
       <button v-if="atFindPage && welcomeObj" class="action-btn">接受</button>
       <button v-if="atFindPage && welcomeObj" class="action-btn">拒绝</button>
