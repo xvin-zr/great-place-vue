@@ -117,7 +117,12 @@ async function onPublishPlace() {
     });
     const data = await res.json();
     console.log("publish", data);
-    if (data.flag === 1) alert("发布成功");
+    if (data.flag === 1) {
+
+      alert("发布成功");
+      showPublish.value = false;
+      location.reload();
+    }
     else alert("发布失败");
     // showPublish.value = false;
   } catch (error) {
@@ -131,7 +136,7 @@ async function uploadFile(file) {
     formData.append("file", file);
     console.log("file", file);
     const url = "http://localhost:3000/upload"
-    const res = await fetch(`${BASE_URL}/uploadflv/upload`, {
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("token")}`,

@@ -69,6 +69,10 @@ async function onDeletePlace() {
     });
     const data = await res.json();
     console.log("delete", data);
+    if (data.flag === 1) {
+      alert("删除成功");
+      location.reload();
+    }
   } catch (error) {
     console.log(error);
   }
