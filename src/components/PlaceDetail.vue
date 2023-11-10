@@ -19,6 +19,24 @@ const id = computed(() => props.selectedPlaceId);
 const place = ref(null);
 const welcomeObj = computed(() => place.value?.hyl);
 
+// 处理上传图片视频
+const isImg = computed(() => {
+  if (!place.value) return false;
+  if (!place?.value.filePath) return false;
+  const [fileName, fileType] = place.value.filePath.split(".");
+  // const fileType =place.value.filePath.split(".").at(-1); 
+  if (!fileType) return false;
+  return ["jpg", "png", "jpeg"].includes(fileType.toLowerCase());
+});
+
+const isVideo = computed(() => {
+  if (!place.value) return false;
+  if (!place?.value.filePath) return false;
+  const [fileName, fileType] = place.value.filePath.split(".");
+  if (!fileType) return false;
+  return ["mp4", "avi", "mkv"].includes(fileType.toLowerCase());
+});
+
 watchEffect(async () => {
   if (!id.value) return;
   console.log(id.value);
@@ -72,6 +90,12 @@ async function onDeletePlace() {
     <blockquote>
       <p class="place-detail-text">{{ place?.description }}</p>
     </blockquote>
+
+    <img
+      v-if="isImg"
+      :src="`${place.filePath}`"
+      alt="wonderful place"
+    />
 
     <hr v-if="welcomeObj" />
 
@@ -148,6 +172,10 @@ async function onDeletePlace() {
   background-color: #e67e22;
   color: #fff;
   transition: all 0.3s;
+}
+
+img {
+  max-width: 100%;
 }
 
 hr {

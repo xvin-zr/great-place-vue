@@ -13,6 +13,7 @@ import PlaceDetail from "../components/PlaceDetail.vue";
 import placeTypeList from "../data/place-type";
 import { getToday } from "../methods/date";
 import { cities } from "../data/area-city";
+import myHeaders from "../data/headers";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const token = sessionStorage.getItem("token");
@@ -24,12 +25,14 @@ const listLen = ref(1);
 const totalPageSize = computed(() => {
   return Math.ceil(listLen.value / pageSize);
 });
-
-// 发布寻去处 publish
 const placeType = ref("");
 const topicName = ref("");
+
+// 发布寻去处 publish
+const publishPlaceType = ref("");
+const publishTopicName = ref("");
 const description = ref("");
-const filePath = ref("");
+const file = ref(null);
 const maxPrice = ref(0);
 const endTime = ref("");
 const province = ref("北京市");
@@ -73,14 +76,27 @@ watchEffect(async function () {
 
 // 发布寻去处 publish
 async function onPublishPlace() {
+  // console.log(file.value);
+  // const url = URL.createObjectURL(file.value);
+  // const link = document.createElement("a");
+  // link.href = url;
+  // link.download = file.value.name;
+  // link.click();
+
+  // // 释放URL对象
+  // URL.revokeObjectURL(url);
+  let filePath = "";
+  if (file.value) {
+    filePath = await uploadFile(file.value);
+  }
   try {
     const bodyObj = {
-      placeType: placeType.value,
-      topicName: topicName.value,
+      placeType: publishPlaceType.value,
+      topicName: publishTopicName.value,
       description: description.value,
-      filePath: "",
+      filePath: filePath,
       maxPrice: maxPrice.value.toString(),
-      endTime: endTime.value,
+      endTime: new Date(endTime.value),
       cityCode: cityCode.value,
     };
     for (const [key, value] of Object.entries(bodyObj)) {
@@ -101,11 +117,39 @@ async function onPublishPlace() {
     });
     const data = await res.json();
     console.log("publish", data);
-    alert("发布成功");
+    if (data.flag === 1) alert("发布成功");
+    else alert("发布失败");
     // showPublish.value = false;
   } catch (error) {
     console.error(error);
   }
+}
+
+async function uploadFile(file) {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    console.log("file", file);
+    const url = "http://localhost:3000/upload"
+    const res = await fetch(`${BASE_URL}/uploadflv/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        type: "find",
+      },
+      body: formData,
+      redirect: "follow",
+    });
+    const data = await res.json();
+    console.log("uploadFile", data);
+    return data.path;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function updateFile(e) {
+  file.value = e.target.files[0];
 }
 </script>
 
@@ -186,7 +230,7 @@ async function onPublishPlace() {
 
           <div class="form-group">
             <label for="type">去处类型:</label>
-            <select v-model="placeType" name="" id="type" required>
+            <select v-model="publishPlaceType" name="" id="type" required>
               <option value="" disabled>请选择</option>
               <option v-for="(val, key) in placeTypeList" :value="key">
                 {{ val }}
@@ -197,7 +241,7 @@ async function onPublishPlace() {
           <div class="form-group">
             <label for="title">主题名称:</label>
             <input
-              v-model="topicName"
+              v-model="publishTopicName"
               id="title"
               type="text"
               placeholder="Great Places"
@@ -266,7 +310,12 @@ async function onPublishPlace() {
 
           <div class="form-group">
             <label for="fileUpload">介绍图片:</label>
-            <input type="file" id="fileUpload" name="fileUpload" />
+            <input
+              @change="updateFile"
+              type="file"
+              id="fileUpload"
+              name="fileUpload"
+            />
           </div>
 
           <button @click.prevent="onPublishPlace" class="upload-btn">
