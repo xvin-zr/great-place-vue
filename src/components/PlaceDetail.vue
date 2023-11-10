@@ -2,7 +2,7 @@
 import { computed, inject, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import myHeaders from "../data/headers";
-import { getNormalDate } from "../methos/date";
+import { getNormalDate } from "../methods/date";
 import placeTypeList from "../data/place-type";
 import statusList from "../data/status";
 
@@ -59,7 +59,7 @@ async function onDeletePlace() {
 
 <template>
   <div class="place-detail">
-    <h2 v-if="!place" class="place-detail-title">选择一个去处</h2>
+    <h2 v-if="!place" class="place-detail-title">👈 选择一个去处</h2>
     <h2 class="place-detail-title">{{ place?.topicName }}</h2>
     <p v-if="place" class="place-detail-status">
       状态：{{ statusList[place?.status] }}

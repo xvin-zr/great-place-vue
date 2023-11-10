@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, provide, ref, watch, watchEffect } from "vue";
 import myHeaders from "../data/headers";
-import { getYearMonth, getYear } from "../methos/date";
+import { getYearMonth, getYear, getCurMonth } from "../methods/date";
 import placeTypeList from "../data/place-type";
 import "./find-welcome.css";
 import { cities } from "../data/area-city";
@@ -27,8 +27,7 @@ const invoices = ref([]);
 const successData = computed(() => {
   return invoices.value.reduce((acc, cur) => {
     const time = getYear(cur.createTime) + "-" + cur.month.padStart(2, "0");
-    acc[time] =
-      (acc[time] || 0) + cur.successTotal;
+    acc[time] = (acc[time] || 0) + cur.successTotal;
     return acc;
   }, {});
 });
@@ -36,8 +35,7 @@ const successData = computed(() => {
 const feesData = computed(() => {
   return invoices.value.reduce((acc, cur) => {
     const time = getYear(cur.createTime) + "-" + cur.month.padStart(2, "0");
-    acc[time] =
-      (acc[time] || 0) + cur.intermediaryFees;
+    acc[time] = (acc[time] || 0) + cur.intermediaryFees;
     return acc;
   }, {});
 });
@@ -47,7 +45,7 @@ provide("feesData", feesData);
 
 onMounted(() => {
   getInvoiceDetails();
-})
+});
 watchEffect(() => {
   getInvoiceDetails();
 });
@@ -86,14 +84,20 @@ async function getInvoiceDetails() {
     <div class="search-container">
       <div>
         <label for="beginTime"> 开始月份：</label>
-        <input type="month" id="beginTime" v-model="beginTime" />
+        <input
+          type="month"
+          id="beginTime"
+          v-model="beginTime"
+          :max="getCurMonth()"
+        />
 
         <label for="endTime">结束月份：</label>
         <input
           type="month"
           id="endTime"
           v-model="endTime"
-          max="getYearMonth()"
+          :min="beginTime"
+          :max="getCurMonth()"
         />
       </div>
       <div>

@@ -1,9 +1,10 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed, inject, provide, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
+const showPublish = inject("showPublish");
 function handleClickFindPlace() {
   if (route.path === "/find-place") {
     showPublish.value = true;
