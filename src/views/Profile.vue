@@ -80,10 +80,8 @@ async function handleModify() {
         ...curUser.value,
         phoneNumber: phoneNumber.value,
         userBriefly: userBriefly.value,
-        password: password.value ? password.value : curUser.value.password,
-        confirmPassword: confirmPassword.value
-          ? confirmPassword.value
-          : curUser.value.password,
+        password: newPassword.value,
+        confirmPassword: confirmPassword.value,
         updateTime: new Date().toISOString(),
       }),
     });
@@ -185,7 +183,7 @@ async function handleModify() {
             ></textarea>
           </dd>
         </dl>
-        <dl v-if="!isLocked">
+        <!-- <dl v-if="!isLocked">
           <dt>
             <label for="old-password">旧密码</label>
           </dt>
@@ -197,12 +195,12 @@ async function handleModify() {
               id="old-password"
             />
           </dd>
-        </dl>
+        </dl> -->
         <dl v-if="!isLocked">
           <dt>
             <!-- <label v-if="isLocked" for="password">密码</label> -->
             <!-- <label v-else for="password">新密码</label> -->
-            <label for="password">新密码</label>
+            <label for="password">（新）密码</label>
           </dt>
           <dd>
             <input

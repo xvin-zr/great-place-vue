@@ -25,30 +25,32 @@ const description = ref("");
 const maxPrice = ref(1);
 const endTime = ref(getToday());
 const file = ref(null);
+const filePath = ref("");
 
 watchEffect(() => {
-    if (!place.value) return;
-    placeType.value = place.value.placeType;
-    topicName.value = place.value.topicName;
-    description.value = place.value.description;
-    maxPrice.value = place.value.maxPrice;
-    endTime.value = getToday(place.value.endTime);
-})
+  if (!place.value) return;
+  placeType.value = place.value.placeType;
+  topicName.value = place.value.topicName;
+  description.value = place.value.description;
+  maxPrice.value = place.value.maxPrice;
+  endTime.value = getToday(place.value.endTime);
+  filePath.value = place.value.filePath;
+});
 
 async function onModifyPlace() {
   if (!confirm("确认修改?")) {
     return;
   }
-  let filePath = "";
   if (file.value) {
-    filePath = await uploadFile(file.value);
+    filePath.value = await uploadFile(file.value);
   }
   try {
     const bodyObj = {
+      id: place.value.id,
       placeType: placeType.value,
       topicName: topicName.value,
       description: description.value,
-      filePath: filePath,
+      filePath: filePath.value,
       maxPrice: maxPrice.value.toString(),
       endTime: endTime.value,
       cityCode: cityCode.value,
