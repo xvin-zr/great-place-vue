@@ -76,15 +76,6 @@ watchEffect(async function () {
 
 // 发布寻去处 publish
 async function onPublishPlace() {
-  // console.log(file.value);
-  // const url = URL.createObjectURL(file.value);
-  // const link = document.createElement("a");
-  // link.href = url;
-  // link.download = file.value.name;
-  // link.click();
-
-  // // 释放URL对象
-  // URL.revokeObjectURL(url);
   let filePath = "";
   if (file.value) {
     filePath = await uploadFile(file.value);
@@ -96,7 +87,7 @@ async function onPublishPlace() {
       description: description.value,
       filePath: filePath,
       maxPrice: maxPrice.value.toString(),
-      endTime: new Date(endTime.value),
+      endTime: endTime.value,
       cityCode: cityCode.value,
     };
     for (const [key, value] of Object.entries(bodyObj)) {

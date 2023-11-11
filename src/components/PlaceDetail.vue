@@ -1,10 +1,11 @@
 <script setup>
-import { computed, inject, ref, watch, watchEffect } from "vue";
+import { computed, inject, provide, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import myHeaders from "../data/headers";
 import { getNormalDate } from "../methods/date";
 import placeTypeList from "../data/place-type";
 import statusList from "../data/status";
+import ModifyPlace from "./ModifyPlace.vue";
 
 const route = useRoute();
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -19,12 +20,17 @@ const id = computed(() => props.selectedPlaceId);
 const place = ref(null);
 const welcomeObj = computed(() => place.value?.hyl);
 
+// 修改寻去处 modify
+const isModifing = ref(false);
+provide("isModifing", isModifing);
+provide("place", place);
+
 // 处理上传图片视频
 const isImg = computed(() => {
   if (!place.value) return false;
   if (!place?.value.filePath) return false;
   const [fileName, fileType] = place.value.filePath.split(".");
-  // const fileType =place.value.filePath.split(".").at(-1); 
+  // const fileType =place.value.filePath.split(".").at(-1);
   if (!fileType) return false;
   return ["jpg", "png", "jpeg"].includes(fileType.toLowerCase());
 });
@@ -34,7 +40,7 @@ const isVideo = computed(() => {
   if (!place?.value.filePath) return false;
   const [fileName, fileType] = place.value.filePath.split(".");
   if (!fileType) return false;
-  return ["mp4", "avi", "mkv"].includes(fileType.toLowerCase());
+  return ["mp4", "avi", "mkv", "webm"].includes(fileType.toLowerCase());
 });
 
 watchEffect(async () => {
@@ -95,11 +101,8 @@ async function onDeletePlace() {
       <p class="place-detail-text">{{ place?.description }}</p>
     </blockquote>
 
-    <img
-      v-if="isImg"
-      :src="`${place.filePath}`"
-      alt="wonderful place"
-    />
+    <img v-if="isImg" :src="`${place.filePath}`" alt="a wonderful place" />
+    <video v-if="isVideo" controls :src="place.filePath" type="video" autoplay></video>
 
     <hr v-if="welcomeObj" />
 
@@ -122,7 +125,7 @@ async function onDeletePlace() {
 
     <div v-if="place && place?.status === '2'" class="place-detail-actions">
       <!-- 没有响应 -->
-      <button v-if="atFindPage && !welcomeObj" class="action-btn">修改</button>
+      <button v-if="atFindPage && !welcomeObj" class="action-btn" @click="isModifing = true">修改</button>
       <button
         v-if="atFindPage && !welcomeObj"
         class="action-btn"
@@ -136,6 +139,7 @@ async function onDeletePlace() {
       <button v-if="!atFindPage" class="action-btn">欢迎来</button>
     </div>
   </div>
+  <ModifyPlace />
 </template>
 
 <style scoped>
@@ -180,6 +184,14 @@ async function onDeletePlace() {
 
 img {
   max-width: 100%;
+  max-height: 200px;
+  margin: 0 auto;
+}
+
+video {
+  max-width: 100%;
+  max-height: 200px;
+  margin: 0 auto; 
 }
 
 hr {
