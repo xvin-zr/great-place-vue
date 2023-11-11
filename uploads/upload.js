@@ -20,6 +20,7 @@ const upload = multer({ storage: storage }); // 指定文件上传的目录
 // const upload = multer({ dest: "./find/" }); // 指定文件上传的目录
 
 app.use(cors());
+app.use(express.json());
 
 app.post("/upload", upload.single("file"), (req, res) => {
   // 单个文件上传的中间件，'file' 是上传表单字段的名称
@@ -31,7 +32,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
   }
 
   const [fileName, fileType] = req.file.originalname.split(".");
-  const type = req.headers.type
+  const type = req.headers.type;
   const filePath = `uploads/${type}/${fileName}_${now}.${fileType}`;
 
   // fs.writeFile(filePath, req.file.buffer, (err) => {
@@ -47,6 +48,23 @@ app.post("/upload", upload.single("file"), (req, res) => {
   // 这里仅打印上传的文件信息
   console.log("File saved:", filePath);
   res.json({ message: "File uploaded successfully", path: filePath });
+});
+
+app.post("/image", (req, res) => {
+  console.log(req.body);
+  const { filePath } = req.body;
+  const fileType = filePath.split(".").at(-1);
+  const imgType = ["jpg", "png", "jepg"];
+  const videoType = ["mp4", "mkv", "avi", "webm", "mov"];
+  let contentType = "";
+  if (imgType.includes(fileType)) {
+    contentType = `image/${fileType}`;
+  } else if (videoType.includes(fileType)) {
+    contentType = `video/${fileType}`;
+  }
+  const retFile = fs.readFileSync("../"+filePath);
+  res.setHeader("Content-Type", contentType);
+  res.send(retFile);
 });
 
 app.listen(3000, () => {

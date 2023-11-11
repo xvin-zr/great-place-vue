@@ -83,6 +83,27 @@ async function onDeletePlace() {
     console.log(error);
   }
 }
+
+// 文件上传和读取
+const imgUrl = ref(null);
+async function getImgVideo(filePath = "") {
+  try {
+    const res = await fetch("http://localhost:3000/image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        filePath: filePath,
+      }),
+      redirect: "follow",
+    });
+    const blob = await res.blob();
+    imgUrl.value = URL.createObjectURL(blob);
+  } catch (error) {
+    console.error(error);
+  }
+}
 </script>
 
 <template>
