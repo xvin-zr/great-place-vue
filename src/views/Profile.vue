@@ -87,6 +87,11 @@ async function handleModify() {
     });
     const data = await res.json();
     console.log("updateProfile", data);
+    if (data.flag === 1) {
+      alert("修改成功");
+    } else {
+      alert("修改失败："+data.msg);
+    }
     isLocked.value = true;
   }
 }
