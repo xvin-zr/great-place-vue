@@ -33,7 +33,7 @@ const publishPlaceType = ref("");
 const publishTopicName = ref("");
 const description = ref("");
 const file = ref(null);
-const maxPrice = ref(0);
+const maxPrice = ref(1);
 const endTime = ref("");
 const province = ref("北京市");
 const cityList = computed(() => {
@@ -118,12 +118,10 @@ async function onPublishPlace() {
     const data = await res.json();
     console.log("publish", data);
     if (data.flag === 1) {
-
       alert("发布成功");
       showPublish.value = false;
       location.reload();
-    }
-    else alert("发布失败");
+    } else alert("发布失败");
     // showPublish.value = false;
   } catch (error) {
     console.error(error);
@@ -135,7 +133,7 @@ async function uploadFile(file) {
     const formData = new FormData();
     formData.append("file", file);
     console.log("file", file);
-    const url = "http://localhost:3000/upload"
+    const url = "http://localhost:3000/upload";
     const res = await fetch(url, {
       method: "POST",
       headers: {
@@ -272,6 +270,7 @@ function updateFile(e) {
               type="number"
               id="maxPrice"
               name="maxPrice"
+              min="1"
               required
             />
           </div>
