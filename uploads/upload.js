@@ -9,7 +9,8 @@ const now = Date.now();
 // const storage = multer.memoryStorage();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./find/");
+    const type = req.headers.type;
+    cb(null, `./${type}/`);
   },
   filename: function (req, file, cb) {
     const [name, type] = file.originalname.split(".");
@@ -33,7 +34,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
   const [fileName, fileType] = req.file.originalname.split(".");
   const type = req.headers.type;
-  const filePath = `uploads/${type}/${fileName}_${now}.${fileType}`;
+  const filePath = `${type}/${fileName}_${now}.${fileType}`;
 
   // fs.writeFile(filePath, req.file.buffer, (err) => {
   //   if (err) {
@@ -44,7 +45,6 @@ app.post("/upload", upload.single("file"), (req, res) => {
   //   console.log("File saved:", filePath);
   // });
 
-  // 处理上传的文件，例如保存到数据库或进行进一步处理
   // 这里仅打印上传的文件信息
   console.log("File saved:", filePath);
   res.json({ message: "File uploaded successfully", path: filePath });
@@ -62,9 +62,14 @@ app.post("/image", (req, res) => {
   } else if (videoType.includes(fileType)) {
     contentType = `video/${fileType}`;
   }
-  const retFile = fs.readFileSync("../"+filePath);
-  res.setHeader("Content-Type", contentType);
-  res.send(retFile);
+  try {
+    const retFile = fs.readFileSync(filePath);
+    res.setHeader("Content-Type", contentType);
+    res.send(retFile);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to read the file" });
+  }
 });
 
 app.listen(3000, () => {

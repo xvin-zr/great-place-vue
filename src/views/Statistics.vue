@@ -44,6 +44,7 @@ provide("successData", successData);
 provide("feesData", feesData);
 
 onMounted(() => {
+  document.title = "好去处 | 数据统计";
   getInvoiceDetails();
 });
 watchEffect(() => {

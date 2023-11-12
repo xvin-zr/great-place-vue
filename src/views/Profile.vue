@@ -46,7 +46,7 @@ async function getUserInfo() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
       },
       redirect: "follow",
     });
