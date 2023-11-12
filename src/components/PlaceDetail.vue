@@ -123,12 +123,20 @@ async function respWelcome(action = "") {
       `${BASE_URL}/xqc/acceptHylResponse?id=${id.value}&status=${status}`,
       {
         method: "PUT",
-        headers: myHeaders,
+        headers: {
+          Authorization: `${sessionStorage.getItem("token")}`,
+        },
         redirect: "follow",
       }
     );
     const data = await res.json();
     console.log("respWelcome", data);
+    if (data.flag === 1) {
+      alert("操作成功");
+      location.reload();
+    } else {
+      alert("失败，请稍后再试");
+    }
   } catch (error) {
     console.error(error);
   }
