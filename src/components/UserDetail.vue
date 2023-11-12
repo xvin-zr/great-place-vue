@@ -73,8 +73,9 @@ async function getUserInfo() {
 <template>
   <div class="place-detail">
     <h2 v-if="!place" class="place-detail-title">👈 选择一个去处<br/>查看用户信息</h2>
-    <h2 class="place-detail-title">{{ place?.topicName }}</h2>
-    <p v-if="place" class="place-detail-status">
+    <h2 v-if="place" class="place-detail-title">{{ place?.topicName }}</h2>
+    <h2 v-if="place" class="place-detail-title">寻去处发布用户 ID：{{ place?.publishUserId }}</h2>
+    <!-- <p v-if="place" class="place-detail-status">
       状态：{{ statusList[place?.status] }}
     </p>
     <p v-if="place" class="place-detail-status">
@@ -84,22 +85,15 @@ async function getUserInfo() {
     </p>
     <blockquote>
       <p class="place-detail-text">{{ place?.description }}</p>
-    </blockquote>
+    </blockquote> -->
 
-    <img v-if="isImg" :src="`${place.filePath}`" alt="a wonderful place" />
-    <video
-      v-if="isVideo"
-      controls
-      :src="place.filePath"
-      type="video"
-      autoplay
-    ></video>
+    
 
     <hr v-if="welcomeObj" />
 
     <div v-if="welcomeObj">
-      <h2 class="place-detail-title">欢迎来响应</h2>
-      <br />
+      <h2 class="place-detail-title">欢迎来响应用户 ID：{{ welcomeObj.responseUserId }}</h2>
+      <!-- <br />
       <p class="place-detail-status">
         {{
           welcomeObj.updateTime
@@ -111,7 +105,7 @@ async function getUserInfo() {
 
       <blockquote>
         <p class="place-detail-text">{{ welcomeObj.description }}</p>
-      </blockquote>
+      </blockquote> -->
     </div>
   </div>
 </template>
