@@ -1,6 +1,6 @@
 const myHeaders = {
   "Content-type": "application/json",
-  "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+  "Authorization": `${sessionStorage.getItem("token")}`,
 };
 
 export default myHeaders;

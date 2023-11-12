@@ -71,6 +71,7 @@
   /* background-color: lightcoral; */
   grid-column: 2 / -1;
   grid-row: 1 / -1;
+  max-height: 75vh;
 }
 
 .place-section .place-pagination {

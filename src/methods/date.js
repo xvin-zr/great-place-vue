@@ -7,8 +7,13 @@ function getNormalDate(dateStr) {
   return `${year}/${month}/${day}`;
 }
 
-function getToday() {
-  const dateObject = new Date();
+function getToday(dateStr = "") {
+  let dateObject;
+  if (dateStr) {
+    dateObject = new Date(dateStr);
+  } else {
+    dateObject = new Date();
+  }
   const year = dateObject.getFullYear();
   const month = (dateObject.getMonth() + 1).toString().padStart(2, "0");
   const day = dateObject.getDate().toString().padStart(2, "0");

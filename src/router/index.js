@@ -40,13 +40,9 @@ const routes = [
         component: () => import("../views/Statistics.vue"),
       },
       {
-        path: "request",
-        component: () => import("../views/Request.vue"),
-      },
-      {
-        path: "response",
-        component: () => import("../views/Response.vue"),
-      },
+        path: "userinfo",
+        component: () => import("../views/UserInfo.vue"),
+      }
     ],
   },
   {

@@ -63,6 +63,15 @@ const username = sessionStorage.getItem("username");
       <ul class="main-nav-list">
         <li>
           <RouterLink
+            to="/admin/userinfo"
+            active-class="active-link"
+            class="main-nav-link"
+          >
+            用户信息
+          </RouterLink>
+        </li>
+        <li>
+          <RouterLink
             to="/admin/statistics"
             active-class="active-link"
             class="main-nav-link"
