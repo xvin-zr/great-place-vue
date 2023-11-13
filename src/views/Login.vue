@@ -47,7 +47,7 @@ async function onLogin() {
       alert("登录成功");
       toUrl("/find-place");
     } else {
-      // alert("登录失败");
+      alert(data.message);
     }
   } catch (error) {
     console.log(error);
@@ -71,7 +71,7 @@ async function onLogin() {
               欢迎登录或注册，让我们帮助您发现全新的目的地和精彩体验！
             </p>
 
-            <form class="cta-form" action="#">
+            <form @keydown.enter.prevent="onLogin" class="cta-form" action="#">
               <div>
                 <label for="username">用户名</label>
                 <input
@@ -112,6 +112,7 @@ async function onLogin() {
         </div>
       </div>
     </section>
+
   </body>
 </template>
 

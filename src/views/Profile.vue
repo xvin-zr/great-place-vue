@@ -9,7 +9,9 @@ const token = sessionStorage.getItem("token");
 // const id = ref("");
 // const userName = ref("");
 const password = ref("");
-// const userType = ref("");
+const userLevel = computed(() => {
+  return curUser.value.userLevel && "";
+});
 // const name = ref("");
 // const idCardType = ref("");
 // const idCard = ref("");
@@ -23,56 +25,50 @@ const userBriefly = ref("");
 const newPassword = ref("");
 const confirmPassword = ref("");
 
-const curUser = reactive({});
+const curUser = ref({});
 
 onMounted(function () {
   document.title = "好去处｜个人信息";
-
-  async function getUserInfo() {
-    try {
-      const res = await fetch(`${BASE_URL}/getUserDetails/userId`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        redirect: "follow",
-      });
-      const data = await res.json();
-      curUser = data.data;
-      // id.value = curUser.id;
-      // userName.value = curUser.userName;
-      // // password.value = curUser.password;
-      // userType.value = curUser.userType;
-      // name.value = curUser.name;
-      // idCardType.value = curUser.idCardType;
-      // idCard.value = curUser.idCard;
-      // phoneNumber.value = curUser.phoneNumber;
-      // userLevel.value = curUser.userLevel;
-      // userBriefly.value = curUser.userBriefly;
-      // registeredCityCode.value = curUser.registeredCityCode;
-      // registeredCityName.value = curUser.registeredCityName;
-      // createTime.value = curUser.createTime;
-      // updateTime.value = curUser.updateTime;
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   getUserInfo();
 });
 
 const isLocked = ref(true);
 const province = ref("");
-const cityList = computed(() => {
-  return cities.find((item) => item.province === province.value)?.cities;
-});
-const selectedCity = ref("");
+// const cityList = computed(() => {
+//   return cities.find((item) => item.province === province.value)?.cities;
+// });
+// const selectedCity = ref("");
+
+async function getUserInfo() {
+  try {
+    const res = await fetch(`${BASE_URL}/getUserDetails/userId`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+      redirect: "follow",
+    });
+    const data = await res.json();
+    console.log("profile", data);
+    curUser.value = data.data;
+    userBriefly.value = curUser.value.userBriefly ?? "";
+    phoneNumber.value = curUser.value.phoneNumber;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function handleModify() {
   if (isLocked.value) {
     isLocked.value = false;
   } else {
+    if (!confirm("确认修改个人信息吗？")) {
+      getUserInfo();
+      isLocked.value = true;
+      return;
+    }
     // 验证用户输入合法
     const res = await fetch(`${BASE_URL}/updateUser`, {
       method: "PUT",
@@ -81,14 +77,21 @@ async function handleModify() {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        ...curUser,
+        ...curUser.value,
         phoneNumber: phoneNumber.value,
         userBriefly: userBriefly.value,
-        password: password.value,
+        password: newPassword.value,
         confirmPassword: confirmPassword.value,
-        updateTime: new Date(),
+        updateTime: new Date().toISOString(),
       }),
     });
+    const data = await res.json();
+    console.log("updateProfile", data);
+    if (data.flag === 1) {
+      alert("修改成功");
+    } else {
+      alert("修改失败："+data.msg);
+    }
     isLocked.value = true;
   }
 }
@@ -96,8 +99,10 @@ async function handleModify() {
 
 <template>
   <main class="profile-main">
-    <h2 class="profile-heading center-text">个人信息 {{ userType ? `(${userType})` : "" }}</h2>
-    
+    <h2 class="profile-heading center-text">
+      个人信息 {{ userLevel === "2" ? `VIP` : "" }}
+    </h2>
+
     <section class="profile-info">
       <form action="#" class="profile-form">
         <dl class="form-group">
@@ -105,7 +110,13 @@ async function handleModify() {
             <label for="username">用户名</label>
           </dt>
           <dd>
-            <input type="text" id="username" :value="curUser.userName" disabled />
+            <input
+              type="text"
+              id="username"
+              name="username"
+              :value="curUser.userName"
+              disabled
+            />
           </dd>
         </dl>
 
@@ -123,7 +134,12 @@ async function handleModify() {
           </dt>
           <dd>
             <!-- <input type= "text" id="license-type" value="身份证" disabled> -->
-            <select v-model="curUser.idCardType" name="" id="license-type" disabled>
+            <select
+              v-model="curUser.idCardType"
+              name=""
+              id="license-type"
+              disabled
+            >
               <option value="1">身份证</option>
               <option value="2">护照</option>
             </select>
@@ -149,7 +165,7 @@ async function handleModify() {
           <dd>
             <input
               v-model="phoneNumber"
-              type="number"
+              type="text"
               id="phone-number"
               length="11"
               :disabled="isLocked"
@@ -172,22 +188,32 @@ async function handleModify() {
             ></textarea>
           </dd>
         </dl>
-        <dl v-if="!isLocked">
+        <!-- <dl v-if="!isLocked">
           <dt>
             <label for="old-password">旧密码</label>
           </dt>
           <dd>
-            <input v-model="password" type="password" name="" id="old-password">
+            <input
+              v-model="password"
+              type="password"
+              name=""
+              id="old-password"
+            />
           </dd>
-        </dl>
+        </dl> -->
         <dl v-if="!isLocked">
           <dt>
             <!-- <label v-if="isLocked" for="password">密码</label> -->
             <!-- <label v-else for="password">新密码</label> -->
-            <label for="password">新密码</label>
+            <label for="password">（新）密码</label>
           </dt>
           <dd>
-            <input v-model="newPassword" type="password" id="password" :disabled="isLocked" />
+            <input
+              v-model="newPassword"
+              type="password"
+              id="password"
+              :disabled="isLocked"
+            />
             <br />
           </dd>
         </dl>
@@ -196,7 +222,12 @@ async function handleModify() {
             <label for="password-check">确认密码</label>
           </dt>
           <dd>
-            <input v-model="confirmPassword" type="password" id="password-check" :disabled="isLocked" />
+            <input
+              v-model="confirmPassword"
+              type="password"
+              id="password-check"
+              :disabled="isLocked"
+            />
           </dd>
         </dl>
         <dl>
@@ -204,9 +235,9 @@ async function handleModify() {
             <label for="city">城市</label>
           </dt>
           <dd>
-            <select v-model="curUser.registeredCityName" id="city" disabled required>
-              <option value="" disabled>请选择</option>
-              <!-- <option
+            <!-- <select :value="curUser.registeredCityName" id="city" disabled required>
+              <option value="" disabled> {{ 123 }}</option> -->
+            <!-- <option
                 v-if="cityList"
                 v-for="city in cityList"
                 :value="city"
@@ -214,8 +245,13 @@ async function handleModify() {
               >
                 {{ city }}
               </option> -->
-            </select>
-            <!-- <input type="text" id="city" value="深圳市" :disabled="isLocked" /> -->
+            <!-- </select> -->
+            <input
+              type="text"
+              id="city"
+              :value="curUser.registeredCityName"
+              disabled
+            />
           </dd>
         </dl>
 

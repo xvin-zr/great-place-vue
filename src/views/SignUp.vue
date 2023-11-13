@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import   {cities}   from "../data/area-city.js";
+import { cities } from "../data/area-city.js";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 onMounted(() => {
   document.title = "好去处｜注册";
@@ -52,13 +52,14 @@ const sign = async () => {
 
     const res_data = await res.json();
     console.log(res_data);
+    if (res_data.flag === "1") {
+      alert("注册成功");
 
+    }
   } catch (error) {
     console.log(error);
   }
-}
-
-
+};
 </script>
 
 <template>

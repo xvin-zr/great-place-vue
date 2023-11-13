@@ -5,7 +5,7 @@ import { createRouter, createWebHistory } from "vue-router";
 // import SignUp from "../views/SignUp.vue";
 
 const routes = [
-  { path: "/", name: "Login", component: ()=>import('../views/Login.vue')},
+  { path: "/", name: "Login", component: () => import("../views/Login.vue") },
   {
     path: "/signup",
     name: "SignUp",
@@ -27,6 +27,24 @@ const routes = [
         path: "profile",
         component: () => import("../views/Profile.vue"),
       },
+    ],
+  },
+  {
+    path: "/admin",
+    component: () => import("../views/Admin.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("../views/Statistics.vue"),
+      },
+      {
+        path: "statistics",
+        component: () => import("../views/Statistics.vue"),
+      },
+      {
+        path: "userinfo",
+        component: () => import("../views/UserInfo.vue"),
+      }
     ],
   },
   {

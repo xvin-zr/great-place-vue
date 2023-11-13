@@ -1,10 +1,11 @@
 <script setup>
-import { computed, inject, ref, watch, watchEffect } from "vue";
+import { computed, inject, provide, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import myHeaders from "../data/headers";
-import { getNormalDate } from "../methos/date";
+import { getNormalDate } from "../methods/date";
 import placeTypeList from "../data/place-type";
 import statusList from "../data/status";
+import ModifyPlace from "./ModifyPlace.vue";
 
 const route = useRoute();
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -18,6 +19,29 @@ const props = defineProps(["selectedPlaceId"]);
 const id = computed(() => props.selectedPlaceId);
 const place = ref(null);
 const welcomeObj = computed(() => place.value?.hyl);
+
+// 修改寻去处 modify
+const isModifing = ref(false);
+provide("isModifing", isModifing);
+provide("place", place);
+
+// 处理上传图片视频
+const isImgReq = computed(() => {
+  if (!place.value) return false;
+  if (!place?.value.filePath) return false;
+  const [fileName, fileType] = place.value.filePath.split(".");
+  // const fileType =place.value.filePath.split(".").at(-1);
+  if (!fileType) return false;
+  return ["jpg", "png", "jpeg"].includes(fileType.toLowerCase());
+});
+
+const isVideoReq = computed(() => {
+  if (!place.value) return false;
+  if (!place?.value.filePath) return false;
+  const [fileName, fileType] = place.value.filePath.split(".");
+  if (!fileType) return false;
+  return ["mp4", "avi", "mkv", "webm"].includes(fileType.toLowerCase());
+});
 
 watchEffect(async () => {
   if (!id.value) return;
@@ -34,12 +58,16 @@ watchEffect(async () => {
     const data = await res.json();
     console.log(data);
     place.value = data.data;
+    await getImgVideo(place.value.filePath);
   } catch (error) {
     console.log(error);
   }
 });
 
 async function onDeletePlace() {
+  if (!confirm("确认删除?")) {
+    return;
+  }
   try {
     const res = await fetch(`${BASE_URL}/xqc/delete/${id.value}`, {
       method: "DELETE",
@@ -48,44 +76,76 @@ async function onDeletePlace() {
     });
     const data = await res.json();
     console.log("delete", data);
+    if (data.flag === 1) {
+      alert("删除成功");
+      location.reload();
+    }
   } catch (error) {
     console.log(error);
   }
 }
-const post_hyl=async () => {
-  // try {
-  //   const res = await fetch(
-  //     `${BASE_URL}/hyl/response`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: token,
-  //       },
-  //       body: JSON.stringify({
 
-  //       xqcId: xqcId.value,
-  //       publishUserId: publishUserId.value,
-  //       description: description.value,
-  //       filePath: filePath.value,
-  //       // status:status.value,
-  //     }),
-  //       redirect: "follow",
-  //     }
-  //   );
-  //   const data = await res.json();
-  //   console.log(data);
-    
-  // } catch (error) {
-  //   console.log(error);
-  // }
-  console.log("post_hyl")
+// 文件上传和读取
+const imgUrlReq = ref(null);
+async function getImgVideo(filePath = "") {
+  if (!filePath) return;
+  try {
+    const res = await fetch("http://localhost:3000/image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        filePath: filePath,
+      }),
+      redirect: "follow",
+    });
+    const blob = await res.blob();
+    imgUrlReq.value = URL.createObjectURL(blob);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// 接受拒绝欢迎来
+async function respWelcome(action = "") {
+  let status = "";
+  if (action === "yes") {
+    status = "1";
+  } else if (action === "no") {
+    status = "2";
+  } else {
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/xqc/acceptHylResponse?id=${id.value}&status=${status}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `${sessionStorage.getItem("token")}`,
+        },
+        redirect: "follow",
+      }
+    );
+    const data = await res.json();
+    console.log("respWelcome", data);
+    if (data.flag === 1) {
+      alert("操作成功");
+      location.reload();
+    } else {
+      alert("失败，请稍后再试");
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
 </script>
 
 <template>
   <div class="place-detail">
-    <h2 v-if="!place" class="place-detail-title">选择一个去处</h2>
+    <h2 v-if="!place" class="place-detail-title">👈 选择一个去处</h2>
     <h2 class="place-detail-title">{{ place?.topicName }}</h2>
     <p v-if="place" class="place-detail-status">
       状态：{{ statusList[place?.status] }}
@@ -98,6 +158,15 @@ const post_hyl=async () => {
     <blockquote>
       <p class="place-detail-text">{{ place?.description }}</p>
     </blockquote>
+
+    <img v-if="isImgReq" :src="imgUrlReq" alt="a wonderful place" />
+    <video
+      v-if="isVideoReq"
+      controls
+      :src="imgUrlReq"
+      type="video"
+      autoplay
+    ></video>
 
     <hr v-if="welcomeObj" />
 
@@ -120,14 +189,42 @@ const post_hyl=async () => {
 
     <div v-if="place && place?.status === '2'" class="place-detail-actions">
       <!-- 没有响应 -->
-      <button v-if="atFindPage && !welcomeObj" class="action-btn">修改</button>
-      <button v-if="atFindPage && !welcomeObj" class="action-btn">删除</button>
+      <button
+        v-if="atFindPage && !welcomeObj"
+        class="action-btn"
+        @click="isModifing = true"
+      >
+        修改
+      </button>
+      <button
+        v-if="atFindPage && !welcomeObj"
+        class="action-btn"
+        @click.prevent="onDeletePlace"
+      >
+        删除
+      </button>
+
       <!-- 有响应之后 -->
-      <button v-if="atFindPage && welcomeObj" class="action-btn">接受</button>
-      <button v-if="atFindPage && welcomeObj" class="action-btn">拒绝</button>
-      <button v-if="!atFindPage" class="action-btn" @click.prevent="post_hyl">欢迎来</button>
+      <button
+        v-if="atFindPage && welcomeObj"
+        class="action-btn"
+        @click="respWelcome('yes')"
+      >
+        接受
+      </button>
+      <button
+        v-if="atFindPage && welcomeObj"
+        class="action-btn"
+        @click="respWelcome('no')"
+      >
+        拒绝
+      </button>
+
+      <!-- 欢迎来 -->
+      <button v-if="!atFindPage" class="action-btn">欢迎来</button>
     </div>
   </div>
+  <ModifyPlace />
 </template>
 
 <style scoped>
@@ -168,6 +265,18 @@ const post_hyl=async () => {
   background-color: #e67e22;
   color: #fff;
   transition: all 0.3s;
+}
+
+img {
+  max-width: 100%;
+  max-height: 200px;
+  margin: 0 auto;
+}
+
+video {
+  max-width: 100%;
+  max-height: 200px;
+  margin: 0 auto;
 }
 
 hr {
