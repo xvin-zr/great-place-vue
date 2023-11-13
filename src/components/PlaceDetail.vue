@@ -52,6 +52,35 @@ async function onDeletePlace() {
     console.log(error);
   }
 }
+const post_hyl=async () => {
+  // try {
+  //   const res = await fetch(
+  //     `${BASE_URL}/hyl/response`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: token,
+  //       },
+  //       body: JSON.stringify({
+
+  //       xqcId: xqcId.value,
+  //       publishUserId: publishUserId.value,
+  //       description: description.value,
+  //       filePath: filePath.value,
+  //       // status:status.value,
+  //     }),
+  //       redirect: "follow",
+  //     }
+  //   );
+  //   const data = await res.json();
+  //   console.log(data);
+    
+  // } catch (error) {
+  //   console.log(error);
+  // }
+  console.log("post_hyl")
+}
 </script>
 
 <template>
@@ -96,7 +125,7 @@ async function onDeletePlace() {
       <!-- 有响应之后 -->
       <button v-if="atFindPage && welcomeObj" class="action-btn">接受</button>
       <button v-if="atFindPage && welcomeObj" class="action-btn">拒绝</button>
-      <button v-if="!atFindPage" class="action-btn">欢迎来</button>
+      <button v-if="!atFindPage" class="action-btn" @click.prevent="post_hyl">欢迎来</button>
     </div>
   </div>
 </template>

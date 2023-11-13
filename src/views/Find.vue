@@ -108,12 +108,6 @@ async function onPublishPlace() {
     <section class="place-section">
       <div class="place-lists">
         <ul class="places">
-          <!-- <li>
-            <div class="place">
-              <h2 class="place-title">Place</h2>
-              <p class="place-description">钓鱼</p>
-            </div>
-          </li> -->
           <li
             @click="selectedPlaceId = place.id"
             v-for="place in placeList"

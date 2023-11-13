@@ -20,11 +20,11 @@ const username = sessionStorage.getItem("username");
 
 <template>
   <header class="header">
-    <a href="#">
+    <a href="/find-place">
       <ion-icon class="icon--header" name="compass-outline"></ion-icon>
       <!-- <h2>好去处</h2> -->
     </a>
-    <span class="header-name">欢迎{{ username ? `，${username.toUpperCase()}` : ""}}</span>
+    <span class="header-name">欢迎{{ username ? `，${username}` : ""}}</span>
     <nav class="main-nav">
       <ul class="main-nav-list">
         <li>
