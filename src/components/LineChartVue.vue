@@ -5,7 +5,11 @@ import * as echarts from "echarts";
 const successData = inject("successData");
 const feesData = inject("feesData");
 const lineChart = ref(null);
-const hasNoData = computed(() => !Object.entries(successData.value).length && !Object.entries(feesData.value).length);
+const hasNoData = computed(
+  () =>
+    !Object.entries(successData.value).length &&
+    !Object.entries(feesData.value).length
+);
 
 onMounted(() => {
   lineChart.value = echarts.init(document.getElementById("lineChart"), null, {
@@ -15,6 +19,11 @@ onMounted(() => {
 
 watchEffect(() => {
   if (!lineChart.value) return;
+  // lineChart.value.dispose();
+  // console.log(lineChart.value);
+  // lineChart.value = echarts.init(document.getElementById("lineChart"), null, {
+  //   render: "svg",
+  // });
   const [completeSuccessData, completeFeesData] = [
     successData.value,
     feesData.value,

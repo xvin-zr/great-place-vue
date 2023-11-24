@@ -1,12 +1,16 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
+import veauryVitePlugins from "veaury/vite/index.js";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueJsx({
-  })],
-  esbuild: { loader: { '.js': 'jsx' } },
+  plugins: [
+    // vue(),
+    // vueJsx({})
+    veauryVitePlugins({ type: "vue" }),
+  ],
+  // esbuild: { loader: { ".js": "jsx" } },
   // server: {
   //   proxy: {
   //     '/api': {
@@ -16,4 +20,4 @@ export default defineConfig({
   //     }
   //   }
   // }
-})
+});
