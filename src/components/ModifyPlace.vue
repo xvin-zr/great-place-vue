@@ -61,7 +61,7 @@ async function onModifyPlace() {
         return;
       }
     }
-    console.log("modifyPlace", bodyObj);
+    console.log("body", bodyObj);
     const res = await fetch(`${BASE_URL}/xqc/update`, {
       method: "PUT",
       headers: {
@@ -78,7 +78,7 @@ async function onModifyPlace() {
       isModifing.value = false;
       location.reload();
     } else alert("修改失败：" + data.msg);
-    // showPublish.value = false;
+    
   } catch (error) {
     console.error(error);
   }

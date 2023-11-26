@@ -1,11 +1,12 @@
 <script setup>
-import { computed, inject, provide, ref, watch, watchEffect } from "vue";
+import { computed, inject, onMounted, provide, ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import myHeaders from "../data/headers";
 import { getNormalDate } from "../methods/date";
 import placeTypeList from "../data/place-type";
 import statusList from "../data/status";
 import ModifyPlace from "./ModifyPlace.vue";
+import ModifyHyl from "./ModifyHyl.vue";
 
 const route = useRoute();
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -17,20 +18,29 @@ const atFindPage = computed(() => {
 
 const props = defineProps(["selectedPlaceId"]);
 const id = computed(() => props.selectedPlaceId);
+
 const place = ref(null);
 const welcomeObj = computed(() => place.value?.hyl);
 
+const isfristtime = computed(() => {
+  
+  if(welcomeObj.value != null){
+    return false
+  }
+    return true
+});
+const isModifingHyl=ref(false);
 // 修改寻去处 modify
 const isModifing = ref(false);
 provide("isModifing", isModifing);
+provide("isModifingHyl",isModifingHyl);
 provide("place", place);
-
+const hyl_id = computed(() => place.value.hyl?.id);
 // 处理上传图片视频
 const isImgReq = computed(() => {
   if (!place.value) return false;
   if (!place?.value.filePath) return false;
   const [fileName, fileType] = place.value.filePath.split(".");
-  // const fileType =place.value.filePath.split(".").at(-1);
   if (!fileType) return false;
   return ["jpg", "png", "jpeg"].includes(fileType.toLowerCase());
 });
@@ -43,9 +53,26 @@ const isVideoReq = computed(() => {
   return ["mp4", "avi", "mkv", "webm"].includes(fileType.toLowerCase());
 });
 
+const isImgRes = computed(() => {
+  if (!place.value) return false;
+  if (!place?.value.hyl?.filePath) return false;
+  const [fileName, fileType] = place.value.hyl.filePath.split(".");
+  if (!fileType) return false;
+  return ["jpg", "png", "jpeg"].includes(fileType.toLowerCase());
+});
+
+const isVideoRes = computed(() => {
+  if (!place.value) return false;
+  if (!place?.value.hyl?.filePath) return false;
+  const [fileName, fileType] = place.value.hyl.filePath.split(".");
+  if (!fileType) return false;
+  return ["mp4", "avi", "mkv", "webm"].includes(fileType.toLowerCase());
+});
+
 watchEffect(async () => {
+
   if (!id.value) return;
-  console.log(id.value);
+  
   try {
     const res = await fetch(`${BASE_URL}/xqc/details/${id.value}`, {
       method: "GET",
@@ -56,9 +83,13 @@ watchEffect(async () => {
       redirect: "follow",
     });
     const data = await res.json();
-    console.log(data);
+    
     place.value = data.data;
+    
+    console.log('place:',place);
+
     await getImgVideo(place.value.filePath);
+    await getImgVideo_hyl(place.value.hyl?.filePath);
   } catch (error) {
     console.log(error);
   }
@@ -87,6 +118,8 @@ async function onDeletePlace() {
 
 // 文件上传和读取
 const imgUrlReq = ref(null);
+const imgUrlRes = ref(null);
+
 async function getImgVideo(filePath = "") {
   if (!filePath) return;
   try {
@@ -102,6 +135,25 @@ async function getImgVideo(filePath = "") {
     });
     const blob = await res.blob();
     imgUrlReq.value = URL.createObjectURL(blob);
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function getImgVideo_hyl(filePath = "") {
+  if (!filePath) return;
+  try {
+    const res = await fetch("http://localhost:3000/image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        filePath: filePath,
+      }),
+      redirect: "follow",
+    });
+    const blob = await res.blob();
+    imgUrlRes.value = URL.createObjectURL(blob);
   } catch (error) {
     console.error(error);
   }
@@ -131,7 +183,7 @@ async function respWelcome(action = "") {
     );
     const data = await res.json();
     console.log("respWelcome", data);
-    if (data.flag === 1) {
+    if (data.flag == 1) {
       alert("操作成功");
       location.reload();
     } else {
@@ -139,6 +191,30 @@ async function respWelcome(action = "") {
     }
   } catch (error) {
     console.error(error);
+  }
+}
+// 删除欢迎来
+async function del_hyl(){
+  if (!confirm("确认删除?")) {
+    return;
+  }
+  try {
+    const res = await fetch(`${BASE_URL}/hyl/delete/${hyl_id.value}`, {
+      method: "DELETE",
+      headers: myHeaders,
+      redirect: "follow",
+    });
+    const data = await res.json();
+    
+    if (data.flag == 1) {
+      alert("删除成功");
+      location.reload();
+    }
+    else{
+      alert(`删除失败：${data.msg}`)
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 </script>
@@ -187,6 +263,15 @@ async function respWelcome(action = "") {
       </blockquote>
     </div>
 
+    <img v-if="isImgRes" :src="imgUrlRes" alt="a wonderful place" />
+    <video
+      v-if="isVideoRes"
+      controls
+      :src="imgUrlRes"
+      type="video"
+      autoplay
+    ></video>
+
     <div v-if="place && place?.status === '2'" class="place-detail-actions">
       <!-- 没有响应 -->
       <button
@@ -221,10 +306,13 @@ async function respWelcome(action = "") {
       </button>
 
       <!-- 欢迎来 -->
-      <button v-if="!atFindPage" class="action-btn">欢迎来</button>
+      <button v-if="!atFindPage && isfristtime" @click.prevent="isModifingHyl=true" class="action-btn">欢迎来</button>
+      <button v-if="!atFindPage && !isfristtime" @click.prevent="isModifingHyl=true" class="action-btn">修改欢迎来</button>
+      <button v-if="!atFindPage && !isfristtime" @click.prevent="del_hyl" class="action-btn">删除欢迎来</button>
     </div>
   </div>
   <ModifyPlace />
+  <ModifyHyl v-model="isfristtime"/>
 </template>
 
 <style scoped>

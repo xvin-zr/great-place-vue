@@ -26,7 +26,7 @@ const username = sessionStorage.getItem("username");
       <!-- <h2>好去处</h2> -->
     </a>
     <span class="header-name"
-      >欢迎{{ username ? `，${username.toUpperCase()}` : "" }}</span
+      >欢迎{{ username ? `，${username}` : "" }}</span
     >
     <nav v-if="!isAdmin" class="main-nav">
       <ul class="main-nav-list">

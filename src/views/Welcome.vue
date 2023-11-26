@@ -16,9 +16,8 @@ const totalPageSize = computed(() => {
   return Math.ceil(listLen.value / pageSize);
 });
 
-onMounted(() => {
+onMounted(async () => {
     document.title = '好去处｜欢迎来';
-
 });
 
 watchEffect(async function () {
@@ -35,16 +34,13 @@ watchEffect(async function () {
       }
     );
     const data = await res.json();
-    console.log(data);
-    const placesData = data.data;
-    placeList.value = placesData.list;
-    listLen.value = placesData.rows;
-    
+    placeList.value = data.data.list;
+    listLen.value = data.data.rows;
+
   } catch (error) {
     console.log(error);
   }
 });
-
 
 </script>
 
@@ -65,7 +61,7 @@ watchEffect(async function () {
           </option>
         </select>
         <input type="text" v-model="topicName" placeholder="搜索寻去处" />
-        <button class="btn--search">Search</button>
+        
       </div>
     </section>
 
