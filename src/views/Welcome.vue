@@ -23,7 +23,7 @@ onMounted(async () => {
 watchEffect(async function () {
   try {
     const res = await fetch(
-      `${BASE_URL}/xqc/list?pageNum=${currPage.value}&pageSize=${pageSize}&placeType=${placeType.value}&topicName=${topicName.value}`,
+      `${BASE_URL}/hyl/list?pageNum=${currPage.value}&pageSize=${pageSize}&placeType=${placeType.value}&topicName=${topicName.value}`,
       {
         method: "GET",
         headers: {
