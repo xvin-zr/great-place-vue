@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import Hello from "../components/test.jsx";
 
 onMounted(() => {
   document.title = "好去处｜登录";
@@ -26,7 +27,7 @@ async function onLogin() {
       },
       body: JSON.stringify({
         userName: username.value,
-        passWord: password.value
+        passWord: password.value,
       }),
       redirect: "follow",
     });
@@ -44,16 +45,46 @@ async function onLogin() {
     if (data.code === 1) {
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("username", username.value);
-      alert("登录成功");
-      toUrl("/find-place");
+      // alert("登录成功");
+      // toUrl("/find-place");
     } else {
       alert(data.message);
+      return
     }
   } catch (error) {
     console.log(error);
   }
+
+  const userType = await getUserInfo();
+  console.log(userType);
+
+  if (userType === "2") {
+    alert("登录成功");
+    toUrl("/find-place");
+  } else if (userType === "1") {
+    alert("登录成功");
+    toUrl("/admin");
+  }
 }
 
+async function getUserInfo() {
+  const token = sessionStorage.getItem("token");
+  try {
+    const res = await fetch(`${BASE_URL}/getUserDetails/userId`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${token}`,
+      },
+      redirect: "follow",
+    });
+    const data = await res.json();
+    console.log("profile", data);
+    return data.data.userType;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 // onPublishPlace();
 </script>
@@ -94,11 +125,9 @@ async function onLogin() {
                 />
               </div>
 
-              
               <button @click.prevent="toUrl('/signup')" class="btn btn--form">
                 注册
               </button>
-              
 
               <button @click.prevent="onLogin" class="btn btn--form">
                 登录
@@ -111,8 +140,8 @@ async function onLogin() {
           <div class="cta-img-box" role="img" aria-label="forbidden city"></div>
         </div>
       </div>
+      <Hello />
     </section>
-
   </body>
 </template>
 
