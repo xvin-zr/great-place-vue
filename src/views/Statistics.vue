@@ -5,7 +5,7 @@ import { getYearMonth, getYear, getCurMonth } from "../methods/date";
 import placeTypeList from "../data/place-type";
 import "./find-welcome.css";
 import { cities } from "../data/area-city";
-// import LineChart from "../components/LineChart.vue";
+import LineChart from "../components/LineChart.vue";
 import LineChartVue from "../components/LineChartVue.vue";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -26,7 +26,7 @@ const invoices = ref([]);
 
 const successData = computed(() => {
   return invoices.value.reduce((acc, cur) => {
-    const time = getYear(cur.createTime) + "-" + cur.month.padStart(2, "0");
+    const time = cur.createTime.slice(0, 7);
     acc[time] = (acc[time] || 0) + cur.successTotal;
     return acc;
   }, {});
@@ -34,7 +34,7 @@ const successData = computed(() => {
 
 const feesData = computed(() => {
   return invoices.value.reduce((acc, cur) => {
-    const time = getYear(cur.createTime) + "-" + cur.month.padStart(2, "0");
+    const time = cur.createTime.slice(0, 7);
     acc[time] = (acc[time] || 0) + cur.intermediaryFees;
     return acc;
   }, {});
@@ -72,7 +72,7 @@ async function getInvoiceDetails() {
       return;
     }
     invoices.value = [...data.data].sort((a, b) => {
-      return a.monthStringToInt - b.monthStringToInt;
+      return a.createTime - b.createTime;
     });
   } catch (error) {
     console.log(error);
@@ -141,7 +141,7 @@ async function getInvoiceDetails() {
       </thead>
       <tbody>
         <tr v-for="item in invoices">
-          <td>{{ item.monthStringToInt }}</td>
+          <td>{{ item.createTime.slice(0, 7) }}</td>
           <td>{{ placeTypeList[item.placeType] }}</td>
           <td>{{ item.successTotal }}</td>
           <td>{{ item.intermediaryFees }}</td>
@@ -150,7 +150,8 @@ async function getInvoiceDetails() {
     </table>
   </section>
 
-  <LineChartVue></LineChartVue>
+  <!-- <LineChartVue></LineChartVue> -->
+  <LineChart />
 </template>
 
 <style scoped>
