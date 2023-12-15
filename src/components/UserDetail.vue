@@ -18,8 +18,6 @@ const publishUser = computed(() => place.value?.user);
 
 console.log("user detail", publishUser.value);
 
-
-
 watchEffect(async () => {
   if (!id.value) return;
   console.log(id.value);
@@ -39,7 +37,6 @@ watchEffect(async () => {
     console.log(error);
   }
 });
-
 
 // 用户信息
 async function getUserInfo() {
@@ -61,19 +58,23 @@ async function getUserInfo() {
     console.log(error);
   }
 }
-
-
-
-
 </script>
 
 <template>
   <div class="place-detail">
-    <h2 v-if="!place" class="place-detail-title">👈 选择一个去处<br/>查看用户信息</h2>
+    <h2 v-if="!place" class="place-detail-title">
+      👈 选择一个去处<br />查看用户信息
+    </h2>
     <h2 v-if="place" class="place-detail-title">{{ place?.topicName }}</h2>
-    <h2 v-if="place" class="text-5xl">寻去处发布用户：{{ publishUser?.name }}</h2>
-    <p v-if="place" class="text-4xl ml-10">用户注册城市：{{ publishUser?.registeredCityName }}</p>
-    <p v-if="place" class="text-4xl font-mono ml-10">用户手机号：{{ publishUser?.phoneNumber }}</p>
+    <h2 v-if="place" class="text-5xl">
+      寻去处发布用户：{{ publishUser?.name }}
+    </h2>
+    <p v-if="place" class="text-4xl ml-10">
+      用户注册城市：{{ publishUser?.registeredCityName }}
+    </p>
+    <p v-if="place" class="text-4xl font-mono ml-10">
+      用户手机号：{{ publishUser?.phoneNumber }}
+    </p>
 
     <!-- <p v-if="place" class="place-detail-status">
       状态：{{ statusList[place?.status] }}
@@ -87,12 +88,12 @@ async function getUserInfo() {
       <p class="place-detail-text">{{ place?.description }}</p>
     </blockquote> -->
 
-    
-
     <hr v-if="welcomeObj" />
 
     <div v-if="welcomeObj">
-      <h2 class="place-detail-title">欢迎来响应用户 ID：{{ welcomeObj.responseUserId }}</h2>
+      <h2 class="place-detail-title">
+        欢迎来响应用户 ID：{{ welcomeObj.responseUserId }}
+      </h2>
       <!-- <br />
       <p class="place-detail-status">
         {{
