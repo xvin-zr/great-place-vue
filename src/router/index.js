@@ -1,6 +1,5 @@
 // import HelloWorld from "../components/HelloWorld.vue";
 import { createRouter, createWebHistory } from "vue-router";
-import Login from "../views/Login.vue";
 
 const routes = [
   { path: "/", name: "Login", component: () => import("../views/Login.vue") },
@@ -42,7 +41,7 @@ const routes = [
       {
         path: "userinfo",
         component: () => import("../views/UserInfo.vue"),
-      }
+      },
     ],
   },
   {
@@ -53,6 +52,16 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+});
+
+router.beforeEach(async (to, from) => {
+  if (
+    !sessionStorage.getItem("token") &&
+    to.name !== "Login" &&
+    to.name !== "SignUp"
+  ) {
+    return "/";
+  }
 });
 
 export default router;
