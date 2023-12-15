@@ -1,5 +1,13 @@
 <script setup>
-import { computed, inject, onMounted, provide, ref, watch, watchEffect } from "vue";
+import {
+  computed,
+  inject,
+  onMounted,
+  provide,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import { useRoute } from "vue-router";
 import myHeaders from "../data/headers";
 import { getNormalDate } from "../methods/date";
@@ -23,17 +31,16 @@ const place = ref(null);
 const welcomeObj = computed(() => place.value?.hyl);
 
 const isfristtime = computed(() => {
-  
-  if(welcomeObj.value != null){
-    return false
+  if (welcomeObj.value != null) {
+    return false;
   }
-    return true
+  return true;
 });
-const isModifingHyl=ref(false);
+const isModifingHyl = ref(false);
 // 修改寻去处 modify
 const isModifing = ref(false);
 provide("isModifing", isModifing);
-provide("isModifingHyl",isModifingHyl);
+provide("isModifingHyl", isModifingHyl);
 provide("place", place);
 const hyl_id = computed(() => place.value.hyl?.id);
 // 处理上传图片视频
@@ -70,9 +77,8 @@ const isVideoRes = computed(() => {
 });
 
 watchEffect(async () => {
-
   if (!id.value) return;
-  
+
   try {
     const res = await fetch(`${BASE_URL}/xqc/details/${id.value}`, {
       method: "GET",
@@ -83,10 +89,10 @@ watchEffect(async () => {
       redirect: "follow",
     });
     const data = await res.json();
-    
+
     place.value = data.data;
-    
-    console.log('place:',place);
+
+    console.log("place:", place);
 
     await getImgVideo(place.value.filePath);
     await getImgVideo_hyl(place.value.hyl?.filePath);
@@ -163,8 +169,14 @@ async function getImgVideo_hyl(filePath = "") {
 async function respWelcome(action = "") {
   let status = "";
   if (action === "yes") {
+    if (!confirm("确认接受?")) {
+      return;
+    }
     status = "1";
   } else if (action === "no") {
+    if (!confirm("确认拒绝?")) {
+      return;
+    }
     status = "2";
   } else {
     return;
@@ -194,7 +206,7 @@ async function respWelcome(action = "") {
   }
 }
 // 删除欢迎来
-async function del_hyl(){
+async function del_hyl() {
   if (!confirm("确认删除?")) {
     return;
   }
@@ -205,13 +217,12 @@ async function del_hyl(){
       redirect: "follow",
     });
     const data = await res.json();
-    
+
     if (data.flag == 1) {
       alert("删除成功");
       location.reload();
-    }
-    else{
-      alert(`删除失败：${data.msg}`)
+    } else {
+      alert(`删除失败：${data.msg}`);
     }
   } catch (error) {
     console.log(error);
@@ -306,13 +317,31 @@ async function del_hyl(){
       </button>
 
       <!-- 欢迎来 -->
-      <button v-if="!atFindPage && isfristtime" @click.prevent="isModifingHyl=true" class="action-btn">欢迎来</button>
-      <button v-if="!atFindPage && !isfristtime" @click.prevent="isModifingHyl=true" class="action-btn">修改欢迎来</button>
-      <button v-if="!atFindPage && !isfristtime" @click.prevent="del_hyl" class="action-btn">删除欢迎来</button>
+      <button
+        v-if="!atFindPage && isfristtime"
+        @click.prevent="isModifingHyl = true"
+        class="action-btn"
+      >
+        欢迎来
+      </button>
+      <button
+        v-if="!atFindPage && !isfristtime"
+        @click.prevent="isModifingHyl = true"
+        class="action-btn"
+      >
+        修改欢迎来
+      </button>
+      <button
+        v-if="!atFindPage && !isfristtime"
+        @click.prevent="del_hyl"
+        class="action-btn"
+      >
+        删除欢迎来
+      </button>
     </div>
   </div>
   <ModifyPlace />
-  <ModifyHyl v-model="isfristtime"/>
+  <ModifyHyl v-model="isfristtime" />
 </template>
 
 <style scoped>

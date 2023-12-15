@@ -21,7 +21,7 @@ const username = sessionStorage.getItem("username");
 
 <template>
   <header class="header">
-    <a href="/find-place">
+    <a href="/">
       <ion-icon class="icon--header" name="compass-outline"></ion-icon>
       <!-- <h2>好去处</h2> -->
     </a>

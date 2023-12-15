@@ -42,31 +42,36 @@ onMounted(() => {
   document.title = "好去处｜寻去处";
 });
 
-watchEffect(
-  debounce(async function () {
-    try {
-      const res = await fetch(
-        `${BASE_URL}/xqc/list?pageNum=${currPage.value}&pageSize=${pageSize}&placeType=${placeType.value}&topicName=${topicName.value}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-          redirect: "follow",
-        }
-      );
-      const data = await res.json();
-      console.log(data);
-      const placesData = data.data;
-      placeList.value = placesData.list;
-      listLen.value = placesData.rows;
-      console.log(placeList.value);
-    } catch (error) {
-      console.log(error);
+async function fetchPlaceList() {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/xqc/list?pageNum=${currPage.value}&pageSize=${pageSize}&placeType=${placeType.value}&topicName=${topicName.value}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        redirect: "follow",
+      }
+    );
+    const data = await res.json();
+    console.log(data);
+    const placesData = data.data;
+    placeList.value = placesData.list;
+    listLen.value = placesData.rows;
+    if (currPage.value > totalPageSize.value) {
+      currPage.value = 1;
     }
-  }, 800)
-);
+    console.log(placeList.value);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+watchEffect(() => {
+  fetchPlaceList();
+});
 
 // 发布寻去处 publish
 async function onPublishPlace() {
@@ -107,7 +112,6 @@ async function onPublishPlace() {
       showPublish.value = false;
       // location.reload();
     } else alert("发布失败");
-    
   } catch (error) {
     console.error(error);
   }
@@ -186,7 +190,8 @@ function updateFile(e) {
           <ion-icon class="icon" name="arrow-back-outline"></ion-icon>
         </button>
         <div class="page">
-          <strong>{{ totalPageSize === 0 ? 0 : currPage }}</strong> / {{ totalPageSize }}
+          <strong>{{ totalPageSize === 0 ? 0 : currPage }}</strong> /
+          {{ totalPageSize }}
         </div>
         <button
           @click.prevent="currPage < totalPageSize ? currPage++ : currPage"

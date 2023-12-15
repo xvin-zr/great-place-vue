@@ -3,9 +3,9 @@ import "../views/find-welcome.css";
 import { computed, inject, ref, watchEffect } from "vue";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const props = defineProps(['modelValue'])
+const props = defineProps(["modelValue"]);
 
-const emit =defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 const isModifingHyl = inject("isModifingHyl");
 const place = inject("place");
 
@@ -14,9 +14,9 @@ const file = ref(null);
 const filePath = ref("");
 
 watchEffect(() => {
-  if (!place.value) return; 
-   description.value = place.value.hyl?.description;
-   filePath.value = place.value.hyl?.filePath;
+  if (!place.value) return;
+  description.value = place.value.hyl?.description;
+  filePath.value = place.value.hyl?.filePath;
 });
 
 async function ModifyHyl1() {
@@ -26,7 +26,7 @@ async function ModifyHyl1() {
   try {
     const bodyObj = {
       xqcId: `${place.value.id}`,
-      publishUserId:`${place.value.publishUserId}`,
+      publishUserId: `${place.value.publishUserId}`,
       description: description.value,
       filePath: filePath.value,
     };
@@ -52,10 +52,9 @@ async function ModifyHyl1() {
     if (data.flag == 1) {
       alert("成功提交");
       isModifingHyl.value = false;
-      emit('update:modelValue',false);
+      emit("update:modelValue", false);
       location.reload();
     } else alert("提交失败：" + data.msg);
-    
   } catch (error) {
     console.error(error);
   }
@@ -71,10 +70,10 @@ async function ModifyHyl2() {
   try {
     const bodyObj = {
       xqcId: `${place.value.id}`,
-      publishUserId:`${place.value.publishUserId}`,
+      publishUserId: `${place.value.publishUserId}`,
       description: description.value,
       filePath: filePath.value,
-      id:`${place.value.hyl.id}`,
+      id: `${place.value.hyl.id}`,
     };
     for (const [key, value] of Object.entries(bodyObj)) {
       if ((value === "" || value === "0") && key !== "filePath") {
@@ -82,7 +81,7 @@ async function ModifyHyl2() {
         return;
       }
     }
-    
+
     const res = await fetch(`${BASE_URL}/hyl/update`, {
       method: "PUT",
       headers: {
@@ -94,13 +93,12 @@ async function ModifyHyl2() {
     });
 
     const data = await res.json();
-    
+
     if (data.flag == 1) {
       alert("修改成功");
       isModifingHyl.value = false;
       location.reload();
     } else alert("修改失败：" + data.msg);
-   
   } catch (error) {
     console.error(error);
   }
@@ -123,7 +121,6 @@ async function uploadFile(file) {
     const data = await res.json();
     console.log("uploadFile", data);
     return data.path;
-
   } catch (error) {
     console.error(error);
   }
@@ -162,8 +159,11 @@ async function uploadFile(file) {
           />
         </div>
 
-
-        <button v-if="props.modelValue" @click.prevent="ModifyHyl1" class="upload-btn">
+        <button
+          v-if="props.modelValue"
+          @click.prevent="ModifyHyl1"
+          class="upload-btn"
+        >
           提交
         </button>
 

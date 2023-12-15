@@ -80,12 +80,17 @@ app.post("/image", async (req, res): Promise<void> => {
 });
 
 app.get("/api/userInfo/:id", async (req, res) => {
-  const { id } = req.params;
-  const sql = `SELECT * FROM \`hqc_user\` WHERE \`id\` = ${id}`;
-  const userInfo = await fetchUserInfo(sql);
-  console.log(userInfo);
+  try {
+    const { id } = req.params;
+    const sql = `SELECT * FROM \`hqc_user\` WHERE \`id\` = ${id}`;
+    const userInfo = await fetchUserInfo(sql);
+    console.log(userInfo);
 
-  res.status(200);
+    res.status(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to read the file" });
+  }
 });
 
 app.listen(3000, () => {

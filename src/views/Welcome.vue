@@ -1,7 +1,7 @@
 <script setup>
-import { onMounted,ref,watchEffect,inject,computed } from 'vue';
-import PlaceDetail from '../components/PlaceDetail.vue';
-import './find-welcome.css';
+import { onMounted, ref, watchEffect, inject, computed } from "vue";
+import PlaceDetail from "../components/PlaceDetail.vue";
+import "./find-welcome.css";
 import placeTypeList from "../data/place-type";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const token = sessionStorage.getItem("token");
@@ -17,7 +17,7 @@ const totalPageSize = computed(() => {
 });
 
 onMounted(async () => {
-    document.title = '好去处｜欢迎来';
+  document.title = "好去处｜欢迎来";
 });
 
 watchEffect(async function () {
@@ -36,32 +36,27 @@ watchEffect(async function () {
     const data = await res.json();
     placeList.value = data.data.list;
     listLen.value = data.data.rows;
-
+    if (currPage.value > totalPageSize.value) {
+      currPage.value = 1;
+    }
   } catch (error) {
     console.log(error);
   }
 });
-
 </script>
 
-
 <template>
-<main>
+  <main>
     <section class="search-section">
       <h2 class="heading-secondary center-text">来吧走起</h2>
       <div class="search-container">
         <select v-model="placeType" id="place" @change="currPage = 1">
           <option value="" :key="0">所有类型</option>
-          <option
-            v-for="(val, key) in placeTypeList"
-            :key="key"
-            :value="key"
-          >
+          <option v-for="(val, key) in placeTypeList" :key="key" :value="key">
             {{ val }}
           </option>
         </select>
         <input type="text" v-model="topicName" placeholder="搜索寻去处" />
-        
       </div>
     </section>
 
@@ -94,7 +89,8 @@ watchEffect(async function () {
           <ion-icon class="icon" name="arrow-back-outline"></ion-icon>
         </button>
         <div class="page">
-          <strong>{{ totalPageSize === 0 ? 0 : currPage }}</strong> / {{ totalPageSize }}
+          <strong>{{ totalPageSize === 0 ? 0 : currPage }}</strong> /
+          {{ totalPageSize }}
         </div>
         <button
           @click.prevent="currPage < totalPageSize ? currPage++ : currPage"
@@ -106,13 +102,7 @@ watchEffect(async function () {
 
       <PlaceDetail :selectedPlaceId="selectedPlaceId" />
     </section>
-
-    
   </main>
-
 </template>
 
-
-<style scoped>
-
-</style>
+<style scoped></style>
