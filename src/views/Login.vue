@@ -19,6 +19,11 @@ function toUrl(to) {
 
 async function onLogin() {
   console.log(username.value, password.value);
+  const pattern = /(?=.*?\d{2})(?=.*?[a-z])(?=.*?[A-Z]).{6,}/;
+  if (!pattern.test(password.value)) {
+    alert("密码至少包含2个数字，1个大写字母，1个小写字母，且长度不小于6位");
+    return;
+  }
   try {
     const res = await fetch(`${BASE_URL}/login`, {
       method: "POST",
@@ -49,7 +54,7 @@ async function onLogin() {
       // toUrl("/find-place");
     } else {
       alert(data.message);
-      return
+      return;
     }
   } catch (error) {
     console.log(error);
@@ -121,11 +126,12 @@ async function getUserInfo() {
                   id="password"
                   type="password"
                   placeholder="**********"
+                  minlength="6"
                   required
                 />
               </div>
 
-              <button @click.prevent="toUrl('/signup')" class="btn btn--form">
+              <button  @click.prevent="toUrl('/signup')" class="btn btn--form">
                 注册
               </button>
 

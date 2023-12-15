@@ -90,7 +90,7 @@ async function handleModify() {
     if (data.flag === 1) {
       alert("修改成功");
     } else {
-      alert("修改失败："+data.msg);
+      alert("修改失败：" + data.msg);
     }
     isLocked.value = true;
   }
