@@ -1,8 +1,10 @@
+import cors from "cors";
 import express from "express";
 import multer from "multer";
-import cors from "cors";
-import path from "path";
-import fs from "fs";
+import { readFile } from "node:fs/promises";
+import { fetchUserInfo } from "./db";
+
+type UploadType = "find" | "welcome";
 
 const app = express();
 const now = Date.now();
@@ -13,7 +15,9 @@ const storage = multer.diskStorage({
     cb(null, `./${type}/`);
   },
   filename: function (req, file, cb) {
-    const [name, type] = file.originalname.split(".");
+    // const [name, type] = file.originalname.split(".");
+    const name = file.originalname.split(".").shift();
+    const type = file.originalname.split(".").pop();
     cb(null, name + "_" + now + "." + type);
   },
 });
@@ -23,7 +27,7 @@ const upload = multer({ storage: storage }); // 指定文件上传的目录
 app.use(cors());
 app.use(express.json());
 
-app.post("/upload", upload.single("file"), (req, res) => {
+app.post("/upload", upload.single("file"), (req, res): void => {
   // 单个文件上传的中间件，'file' 是上传表单字段的名称
 
   // 文件信息可以通过 req.file 访问
@@ -32,8 +36,10 @@ app.post("/upload", upload.single("file"), (req, res) => {
     return;
   }
 
-  const [fileName, fileType] = req.file.originalname.split(".");
-  const type = req.headers.type;
+  // const [fileName, fileType] = req.file.originalname.split(".");
+  const fileName = req.file.originalname.split(".").shift();
+  const fileType = req.file.originalname.split(".").pop();
+  const type: UploadType = req.headers.type as UploadType;
   const filePath = `${type}/${fileName}_${now}.${fileType}`;
 
   // fs.writeFile(filePath, req.file.buffer, (err) => {
@@ -50,10 +56,11 @@ app.post("/upload", upload.single("file"), (req, res) => {
   res.json({ message: "File uploaded successfully", path: filePath });
 });
 
-app.post("/image", (req, res) => {
+// Get file
+app.post("/image", async (req, res): Promise<void> => {
   console.log(req.body);
   const { filePath } = req.body;
-  const fileType = filePath.split(".").at(-1);
+  const fileType = filePath.split(".").at(-1) as string;
   const imgType = ["jpg", "png", "jepg"];
   const videoType = ["mp4", "mkv", "avi", "webm", "mov"];
   let contentType = "";
@@ -63,13 +70,22 @@ app.post("/image", (req, res) => {
     contentType = `video/${fileType}`;
   }
   try {
-    const retFile = fs.readFileSync(filePath);
+    const retFile = await readFile(filePath);
     res.setHeader("Content-Type", contentType);
     res.send(retFile);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to read the file" });
   }
+});
+
+app.get("/api/userInfo/:id", async (req, res) => {
+  const { id } = req.params;
+  const sql = `SELECT * FROM \`hqc_user\` WHERE \`id\` = ${id}`;
+  const userInfo = await fetchUserInfo(sql);
+  console.log(userInfo);
+
+  res.status(200);
 });
 
 app.listen(3000, () => {

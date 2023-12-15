@@ -1,19 +1,11 @@
 <script setup>
-import "./find-welcome.css";
-import {
-  computed,
-  inject,
-  onMounted,
-  provide,
-  reactive,
-  ref,
-  watchEffect,
-} from "vue";
+import debounce from "lodash.debounce";
+import { computed, inject, onMounted, ref, watchEffect } from "vue";
 import PlaceDetail from "../components/PlaceDetail.vue";
+import { cities } from "../data/area-city";
 import placeTypeList from "../data/place-type";
 import { getToday } from "../methods/date";
-import { cities } from "../data/area-city";
-import myHeaders from "../data/headers";
+import "./find-welcome.css";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const token = sessionStorage.getItem("token");
@@ -50,29 +42,31 @@ onMounted(() => {
   document.title = "好去处｜寻去处";
 });
 
-watchEffect(async function () {
-  try {
-    const res = await fetch(
-      `${BASE_URL}/xqc/list?pageNum=${currPage.value}&pageSize=${pageSize}&placeType=${placeType.value}&topicName=${topicName.value}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        redirect: "follow",
-      }
-    );
-    const data = await res.json();
-    console.log(data);
-    const placesData = data.data;
-    placeList.value = placesData.list;
-    listLen.value = placesData.rows;
-    console.log(placeList.value);
-  } catch (error) {
-    console.log(error);
-  }
-});
+watchEffect(
+  debounce(async function () {
+    try {
+      const res = await fetch(
+        `${BASE_URL}/xqc/list?pageNum=${currPage.value}&pageSize=${pageSize}&placeType=${placeType.value}&topicName=${topicName.value}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          redirect: "follow",
+        }
+      );
+      const data = await res.json();
+      console.log(data);
+      const placesData = data.data;
+      placeList.value = placesData.list;
+      listLen.value = placesData.rows;
+      console.log(placeList.value);
+    } catch (error) {
+      console.log(error);
+    }
+  }, 800)
+);
 
 // 发布寻去处 publish
 async function onPublishPlace() {
