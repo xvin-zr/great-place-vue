@@ -1,20 +1,14 @@
 <script setup>
-import "./find-welcome.css";
 import {
-  computed,
-  inject,
-  onMounted,
-  provide,
-  reactive,
-  ref,
-  watchEffect,
+computed,
+inject,
+onMounted,
+ref,
+watchEffect
 } from "vue";
 import UserDetail from "../components/UserDetail.vue";
 import placeTypeList from "../data/place-type";
-import statusList from "../data/status";
-import { getToday } from "../methods/date";
-import { cities } from "../data/area-city";
-import myHeaders from "../data/headers";
+import "./find-welcome.css";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const token = sessionStorage.getItem("token");
@@ -131,6 +125,5 @@ watchEffect(async function () {
 
       <UserDetail :selectedPlaceId="selectedPlaceId" />
     </section>
-
   </main>
 </template>

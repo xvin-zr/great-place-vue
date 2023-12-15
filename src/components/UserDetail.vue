@@ -1,11 +1,6 @@
 <script setup>
-import { computed, inject, provide, ref, watch, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import myHeaders from "../data/headers";
-import { getNormalDate } from "../methods/date";
-import placeTypeList from "../data/place-type";
-import statusList from "../data/status";
-import ModifyPlace from "./ModifyPlace.vue";
 
 const route = useRoute();
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -19,7 +14,9 @@ const props = defineProps(["selectedPlaceId"]);
 const id = computed(() => props.selectedPlaceId);
 const place = ref(null);
 const welcomeObj = computed(() => place.value?.hyl);
+const publishUser = computed(() => place.value?.user);
 
+console.log("user detail", publishUser.value);
 
 
 
@@ -74,7 +71,10 @@ async function getUserInfo() {
   <div class="place-detail">
     <h2 v-if="!place" class="place-detail-title">👈 选择一个去处<br/>查看用户信息</h2>
     <h2 v-if="place" class="place-detail-title">{{ place?.topicName }}</h2>
-    <h2 v-if="place" class="place-detail-title">寻去处发布用户 ID：{{ place?.publishUserId }}</h2>
+    <h2 v-if="place" class="text-5xl">寻去处发布用户：{{ publishUser?.name }}</h2>
+    <p v-if="place" class="text-4xl ml-10">用户注册城市：{{ publishUser?.registeredCityName }}</p>
+    <p v-if="place" class="text-4xl font-mono ml-10">用户手机号：{{ publishUser?.phoneNumber }}</p>
+
     <!-- <p v-if="place" class="place-detail-status">
       状态：{{ statusList[place?.status] }}
     </p>
