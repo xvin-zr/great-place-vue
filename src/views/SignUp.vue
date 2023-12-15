@@ -12,17 +12,16 @@ const phoneNumber = ref(null);
 const province = ref("");
 const userType = ref("");
 const cityList = computed(() => {
-  return cities.find((item) => item.name === province.value)?.districts;
+  return cities.find(item => item.name === province.value)?.districts;
 });
 const registeredCityName = ref("");
-const name = ref("");
-const idCardType = ref("");
-const idCard = ref("");
-const userLevel = ref("");
+const name=ref("")
+const idCardType=ref("")
+const idCard=ref("")
+const userLevel=ref("")
 const registeredCityCode = computed(() => {
-  return cityList.value.find((item) => item.name === registeredCityName.value)
-    ?.adcode;
-});
+  return cityList.value.find( item => item.name === registeredCityName.value)?.adcode;
+})
 
 const sign = async () => {
   try {
@@ -113,6 +112,7 @@ const sign = async () => {
                     >
                       {{ item.name }}
                     </option>
+            
                   </select>
                 </div>
 
@@ -141,12 +141,7 @@ const sign = async () => {
 
                 <div>
                   <label for="license-number">证件号*</label>
-                  <input
-                    v-model="idCard"
-                    type="text"
-                    id="license-number"
-                    required
-                  />
+                  <input v-model="idCard" type="text" id="license-number" required />
                 </div>
 
                 <div>
@@ -169,13 +164,7 @@ const sign = async () => {
 
                 <div>
                   <label for="name">姓名*</label>
-                  <input
-                    v-model="name"
-                    type="text"
-                    id="name"
-                    placeholder="xxx"
-                    required
-                  />
+                  <input v-model="name" type="text" id="name" placeholder="xxx" required />
                 </div>
 
                 <div>
@@ -203,9 +192,8 @@ const sign = async () => {
                   </select>
                 </div>
 
-                <button @click.prevent="sign" class="btn btn--form">
-                  注册
-                </button>
+                <button @click.prevent="sign" class="btn btn--form">注册</button>
+
               </form>
             </div>
             <div

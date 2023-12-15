@@ -90,7 +90,7 @@ async function onPublishPlace() {
         return;
       }
     }
-    console.log("publish", bodyObj);
+    // console.log("publish", bodyObj);
     const res = await fetch(`${BASE_URL}/xqc/save`, {
       method: "POST",
       headers: {
@@ -105,9 +105,9 @@ async function onPublishPlace() {
     if (data.flag === 1) {
       alert("发布成功");
       showPublish.value = false;
-      location.reload();
+      // location.reload();
     } else alert("发布失败");
-    // showPublish.value = false;
+    
   } catch (error) {
     console.error(error);
   }
@@ -160,12 +160,6 @@ function updateFile(e) {
     <section class="place-section">
       <div class="place-lists">
         <ul class="places">
-          <!-- <li>
-            <div class="place">
-              <h2 class="place-title">Place</h2>
-              <p class="place-description">钓鱼</p>
-            </div>
-          </li> -->
           <li
             @click="selectedPlaceId = place.id"
             v-for="place in placeList"
@@ -192,8 +186,7 @@ function updateFile(e) {
           <ion-icon class="icon" name="arrow-back-outline"></ion-icon>
         </button>
         <div class="page">
-          <strong>{{ totalPageSize === 0 ? 0 : currPage }}</strong> /
-          {{ totalPageSize }}
+          <strong>{{ totalPageSize === 0 ? 0 : currPage }}</strong> / {{ totalPageSize }}
         </div>
         <button
           @click.prevent="currPage < totalPageSize ? currPage++ : currPage"
