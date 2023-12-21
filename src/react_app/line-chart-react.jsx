@@ -13,10 +13,10 @@ function LineChartReact({ successData, feesData }) {
   }
   console.log(chartData);
   return (
-    <Card className="h-[700px]">
-      <Title className="text-[30px]">成交单数与中介费</Title>
+    <Card className="h-[700px] max-w-full">
+      <Title className="text-[24px]">成交单数与中介费</Title>
       <LineChart
-        className="text-tremor-title h-[500px]"
+        className="text-[24px] h-[500px]"
         data={chartData}
         index="month"
         categories={["成交数", "中介费"]}

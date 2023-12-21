@@ -1,12 +1,11 @@
 <script setup>
-import { computed, onMounted, provide, ref, watch, watchEffect } from "vue";
-import myHeaders from "../data/headers";
-import { getYearMonth, getYear, getCurMonth } from "../methods/date";
-import placeTypeList from "../data/place-type";
-import "./find-welcome.css";
-import { cities } from "../data/area-city";
+import { computed, onMounted, provide, ref, watchEffect } from "vue";
 import LineChart from "../components/LineChart.vue";
-import LineChartVue from "../components/LineChartVue.vue";
+import { cities } from "../data/area-city";
+import myHeaders from "../data/headers";
+import placeTypeList from "../data/place-type";
+import { getCurMonth, getYearMonth } from "../methods/date";
+import "./find-welcome.css";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const DEFAULT_OFFSET = -3;
@@ -23,6 +22,29 @@ const cityCode = computed(() => {
 });
 
 const invoices = ref([]);
+const mergedInvoices = computed(() => {
+  const merged = [];
+  invoices.value.forEach((item) => {
+    if (!item) return;
+    const createTime = item.createTime.slice(0, 7);
+    const placeType = item.placeType;
+    const index = merged.findIndex(
+      (item) => item?.createTime === createTime && item?.placeType === placeType
+    );
+    if (index === -1) {
+      merged.push({
+        createTime,
+        placeType,
+        successTotal: item.successTotal,
+        intermediaryFees: item.intermediaryFees,
+      });
+    } else {
+      merged[index].successTotal += item.successTotal;
+      merged[index].intermediaryFees += item.intermediaryFees;
+    }
+  });
+  return merged;
+});
 
 const successData = computed(() => {
   return invoices.value.reduce((acc, cur) => {
@@ -140,8 +162,8 @@ async function getInvoiceDetails() {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in invoices">
-          <td>{{ item.createTime.slice(0, 7) }}</td>
+        <tr v-for="item in mergedInvoices">
+          <td>{{ item.createTime }}</td>
           <td>{{ placeTypeList[item.placeType] }}</td>
           <td>{{ item.successTotal }}</td>
           <td>{{ item.intermediaryFees }}</td>

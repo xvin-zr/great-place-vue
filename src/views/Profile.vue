@@ -1,6 +1,5 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from "vue";
-import { cities } from "../data/city.js";
+import { computed, onMounted, ref } from "vue";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const token = sessionStorage.getItem("token");
@@ -67,6 +66,10 @@ async function handleModify() {
     if (!confirm("确认修改个人信息吗？")) {
       getUserInfo();
       isLocked.value = true;
+      return;
+    }
+    if (!newPassword.value || !confirmPassword.value) {
+      alert("密码不能为空，请输入当前密码或想要修改的新密码");
       return;
     }
     // 验证用户输入合法

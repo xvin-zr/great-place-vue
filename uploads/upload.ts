@@ -2,7 +2,6 @@ import cors from "cors";
 import express from "express";
 import multer from "multer";
 import { readFile } from "node:fs/promises";
-import { fetchUserInfo } from "./db";
 
 type UploadType = "find" | "welcome";
 
@@ -36,20 +35,10 @@ app.post("/upload", upload.single("file"), (req, res): void => {
     return;
   }
 
-  // const [fileName, fileType] = req.file.originalname.split(".");
   const fileName = req.file.originalname.split(".").shift();
   const fileType = req.file.originalname.split(".").pop();
   const type: UploadType = req.headers.type as UploadType;
   const filePath = `${type}/${fileName}_${now}.${fileType}`;
-
-  // fs.writeFile(filePath, req.file.buffer, (err) => {
-  //   if (err) {
-  //     console.error(err);
-  //     res.status(500).json({ error: "Failed to save the file" });
-  //   }
-
-  //   console.log("File saved:", filePath);
-  // });
 
   // 这里仅打印上传的文件信息
   console.log("File saved:", filePath);
@@ -68,25 +57,13 @@ app.post("/image", async (req, res): Promise<void> => {
     contentType = `image/${fileType}`;
   } else if (videoType.includes(fileType)) {
     contentType = `video/${fileType}`;
+  } else {
+    res.status(400).json({ error: "File type not supported!" });
   }
   try {
     const retFile = await readFile(filePath);
     res.setHeader("Content-Type", contentType);
     res.send(retFile);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to read the file" });
-  }
-});
-
-app.get("/api/userInfo/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const sql = `SELECT * FROM \`hqc_user\` WHERE \`id\` = ${id}`;
-    const userInfo = await fetchUserInfo(sql);
-    console.log(userInfo);
-
-    res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to read the file" });

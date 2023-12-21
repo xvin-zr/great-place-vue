@@ -1,9 +1,9 @@
 <script setup>
-import { applyPureReactInVue, applyReactInVue } from "veaury";
-import LineChartReact from "../react_app/line-chart-react.jsx";
+import { applyPureReactInVue } from "veaury";
 import { inject } from "vue";
+import LineChartReact from "../react_app/line-chart-react.jsx";
 
-const LineChart = applyReactInVue(LineChartReact);
+const LineChart = applyPureReactInVue(LineChartReact);
 
 const successData = inject("successData");
 const feesData = inject("feesData");

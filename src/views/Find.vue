@@ -1,5 +1,4 @@
 <script setup>
-import debounce from "lodash.debounce";
 import { computed, inject, onMounted, ref, watchEffect } from "vue";
 import PlaceDetail from "../components/PlaceDetail.vue";
 import { cities } from "../data/area-city";
@@ -110,7 +109,7 @@ async function onPublishPlace() {
     if (data.flag === 1) {
       alert("发布成功");
       showPublish.value = false;
-      // location.reload();
+      location.reload();
     } else alert("发布失败");
   } catch (error) {
     console.error(error);

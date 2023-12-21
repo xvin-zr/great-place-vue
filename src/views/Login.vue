@@ -19,7 +19,7 @@ function toUrl(to) {
 
 async function onLogin() {
   console.log(username.value, password.value);
-  const pattern = /(?=.*?\d{2})(?=.*?[a-z])(?=.*?[A-Z]).{6,}/;
+  const pattern = /^(?=.*\d.*\d)(?=.*[A-Z])(?=.*[a-z]).{6,}$/;
   if (!pattern.test(password.value)) {
     alert("密码至少包含2个数字，1个大写字母，1个小写字母，且长度不小于6位");
     return;
