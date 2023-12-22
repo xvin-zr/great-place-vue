@@ -1,7 +1,9 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { cities } from "../data/area-city.js";
+import { useRouter } from "vue-router";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+const router = useRouter();
 
 onMounted(() => {
   document.title = "好去处｜注册";
@@ -13,18 +15,34 @@ const phoneNumber = ref(null);
 const province = ref("");
 const userType = ref("");
 const cityList = computed(() => {
-  return cities.find(item => item.name === province.value)?.districts;
+  return cities.find((item) => item.name === province.value)?.districts;
 });
 const registeredCityName = ref("");
-const name=ref("")
-const idCardType=ref("")
-const idCard=ref("")
-const userLevel=ref("")
+const name = ref("");
+const idCardType = ref("");
+const idCard = ref("");
+const userLevel = ref("");
 const registeredCityCode = computed(() => {
-  return cityList.value.find( item => item.name === registeredCityName.value)?.adcode;
-})
+  return cityList.value.find((item) => item.name === registeredCityName.value)
+    ?.adcode;
+});
 
 const sign = async () => {
+  if (
+    !username.value ||
+    !password.value ||
+    !phoneNumber.value ||
+    !province.value ||
+    !registeredCityName.value ||
+    !idCardType.value ||
+    !idCard.value ||
+    !userType.value ||
+    !name.value ||
+    !userLevel.value
+  ) {
+    alert("请填写完整信息");
+    return;
+  }
   const pattern = /^(?=.*\d.*\d)(?=.*[A-Z])(?=.*[a-z]).{6,}$/;
   if (!pattern.test(password.value)) {
     alert("密码至少包含2个数字，1个大写字母，1个小写字母，且长度不小于6位");
@@ -60,7 +78,7 @@ const sign = async () => {
     console.log(res_data);
     if (res_data.flag === "1") {
       alert("注册成功");
-
+      router.push("/");
     }
   } catch (error) {
     console.log(error);
@@ -118,7 +136,6 @@ const sign = async () => {
                     >
                       {{ item.name }}
                     </option>
-            
                   </select>
                 </div>
 
@@ -147,7 +164,12 @@ const sign = async () => {
 
                 <div>
                   <label for="license-number">证件号*</label>
-                  <input v-model="idCard" type="text" id="license-number" required />
+                  <input
+                    v-model="idCard"
+                    type="text"
+                    id="license-number"
+                    required
+                  />
                 </div>
 
                 <div>
@@ -170,7 +192,13 @@ const sign = async () => {
 
                 <div>
                   <label for="name">姓名*</label>
-                  <input v-model="name" type="text" id="name" placeholder="xxx" required />
+                  <input
+                    v-model="name"
+                    type="text"
+                    id="name"
+                    placeholder="xxx"
+                    required
+                  />
                 </div>
 
                 <div>
@@ -198,8 +226,9 @@ const sign = async () => {
                   </select>
                 </div>
 
-                <button @click.prevent="sign" class="btn btn--form">注册</button>
-
+                <button @click.prevent="sign" class="btn btn--form">
+                  注册
+                </button>
               </form>
             </div>
             <div
