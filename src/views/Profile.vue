@@ -72,7 +72,13 @@ async function handleModify() {
       alert("密码不能为空，请输入当前密码或想要修改的新密码");
       return;
     }
+
     // 验证用户输入合法
+    const pattern = /^(?=.*\d.*\d)(?=.*[A-Z])(?=.*[a-z]).{6,}$/;
+    if (!pattern.test(newPassword.value)) {
+      alert("密码至少包含2个数字，1个大写字母，1个小写字母，且长度不小于6位");
+      return;
+    }
     const res = await fetch(`${BASE_URL}/updateUser`, {
       method: "PUT",
       headers: {
